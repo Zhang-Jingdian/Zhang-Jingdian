@@ -1,213 +1,247 @@
 <div align="center">
 
-![Header](https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=300&section=header&text=Hey%20There!%20🚀&fontSize=50&fontAlignY=40&desc=Welcome%20to%20my%20digital%20universe&descAlignY=60&descAlign=50)
+![Header](https://capsule-render.vercel.app/api?type=waving&color=timeGradient&customColorList=12,2,20,25,30,32&height=280&section=header&text=Hello%20World!%20I'm%20ZJD%20🚀&fontSize=45&fontAlignY=40&desc=Welcome%20to%20my%20digital%20playground%20⚡&descAlignY=60&descAlign=50&animation=twinkling)
 
 </div>
 
-<h1 align="center">
-  <img src="https://readme-typing-svg.herokuapp.com?font=Orbitron&size=35&pause=1000&color=00D8FF&center=true&vCenter=true&width=500&lines=🌟+Code+Wizard;🚀+Tech+Innovator;🎯+Problem+Solver;💡+Creative+Developer;🌈+Digital+Artist" alt="Typing SVG" />
-</h1>
-
+<!-- 复古访客计数器 - 致敬Marcel Pociot风格 -->
 <div align="center">
   
-  [![GitHub followers](https://img.shields.io/github/followers/yourusername?label=Followers&style=for-the-badge&color=00D8FF&labelColor=black)](https://github.com/yourusername)
-  [![GitHub stars](https://img.shields.io/github/stars/yourusername?affiliations=OWNER%2CCOLLABORATOR&style=for-the-badge&color=FFD700&labelColor=black)](https://github.com/yourusername)
-  [![Profile views](https://komarev.com/ghpvc/?username=yourusername&style=for-the-badge&color=blueviolet&labelColor=black)](https://github.com/yourusername)
+  <img src="https://profile-counter.glitch.me/zjd/count.svg" />
   
-</div>
-
-<div align="center">
+  <br>
   
-  ```yaml
-  Name: "你的名字"
-  Role: ["Full Stack Developer", "AI Enthusiast", "Open Source Contributor"]
-  Location: "地球 🌍"
-  Languages: ["Python", "JavaScript", "TypeScript", "Go", "Rust"]
-  Interests: ["机器学习", "Web3", "云计算", "DevOps"]
-  Current_Focus: "构建下一代应用"
-  Fun_Fact: "代码是我的第二语言，第一语言是咖啡 ☕"
-  ```
+  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=22&duration=3000&pause=1000&color=00D8FF&center=true&vCenter=true&multiline=true&width=600&height=100&lines=🎯+Full+Stack+Developer;🤖+AI+Enthusiast;🚀+Open+Source+Contributor;☕+Coffee+%2B+Code+%3D+Magic" alt="Typing SVG" />
   
 </div>
 
 ---
 
-<h2 align="center">🛠️ Tech Arsenal</h2>
-
-<div align="center">
-
-### 🎨 Frontend Magic
-![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
-![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
-![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
-![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-![Vue.js](https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vue.js&logoColor=4FC08D)
-![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white)
-
-### ⚙️ Backend Power
-![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)
-![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Go](https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white)
-![Rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
-![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
-![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
-
-### ☁️ Cloud & DevOps
-![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-![Kubernetes](https://img.shields.io/badge/Kubernetes-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white)
-![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)
-![Terraform](https://img.shields.io/badge/Terraform-623CE4?style=for-the-badge&logo=terraform&logoColor=white)
-
-### 🤖 AI & ML
-![TensorFlow](https://img.shields.io/badge/TensorFlow-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white)
-![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)
-![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white)
-
-</div>
-
----
-
-<h2 align="center">🎯 GitHub Analytics</h2>
-
-<div align="center">
-  <img width="49%" height="195px" src="https://github-readme-stats.vercel.app/api?username=yourusername&show_icons=true&count_private=true&hide_border=true&title_color=00D8FF&icon_color=00D8FF&text_color=c9d1d9&bg_color=0d1117" />
-  <img width="49%" height="195px" src="https://github-readme-stats.vercel.app/api/top-langs/?username=yourusername&layout=compact&hide_border=true&title_color=00D8FF&text_color=c9d1d9&bg_color=0d1117" />
-</div>
-
-<div align="center">
-  <img src="https://github-readme-streak-stats.herokuapp.com/?user=yourusername&theme=tokyonight&hide_border=true&stroke=0000&background=0D1117&ring=00D8FF&fire=00D8FF&currStreakLabel=00D8FF" />
-</div>
-
-<div align="center">
-  <img src="https://github-readme-activity-graph.vercel.app/graph?username=yourusername&bg_color=0d1117&color=00d8ff&line=00d8ff&point=ffffff&area=true&hide_border=true" />
-</div>
-
----
-
-<h2 align="center">🏆 GitHub Trophies</h2>
-
-<div align="center">
-  <img src="https://github-profile-trophy.vercel.app/?username=yourusername&theme=tokyonight&no-frame=true&margin-w=15&margin-h=15&column=7" />
-</div>
-
----
-
-<h2 align="center">🐍 Contribution Snake</h2>
-
-<div align="center">
-  <img src="https://raw.githubusercontent.com/yourusername/yourusername/output/github-contribution-grid-snake-dark.svg" />
-</div>
-
----
-
-<h2 align="center">📊 Detailed Stats</h2>
-
+## 📬 留言簿 | Guestbook
+<!-- 互动留言板 - 让访客留下足迹 -->
 <div align="center">
   
-  ![Metrics](https://metrics.lecoq.io/yourusername?template=classic&repositories.forks=true&languages=1&lines=1&config.timezone=Asia%2FShanghai)
+**👋 欢迎访问我的GitHub！如果你觉得我的项目有趣，请在 [Issues](https://github.com/zjd/zjd/issues) 里留个言吧！**
+  
+[![GitHub issues](https://img.shields.io/github/issues/zjd/zjd?style=for-the-badge&logo=github&logoColor=white&color=ff6b6b)](https://github.com/zjd/zjd/issues)
   
 </div>
 
 ---
 
-<h2 align="center">🚀 Featured Projects</h2>
+## 🎨 彩虹技能标签 | Rainbow Skills
+<!-- 参考Stefany Sá的彩虹标签设计 -->
 
 <div align="center">
+
+### 🔥 前端宇宙
+![HTML5](https://img.shields.io/badge/HTML5-FF6B6B?style=for-the-badge&logo=html5&logoColor=white&labelColor=FF6B6B)
+![CSS3](https://img.shields.io/badge/CSS3-4ECDC4?style=for-the-badge&logo=css3&logoColor=white&labelColor=4ECDC4)
+![JavaScript](https://img.shields.io/badge/JavaScript-FFE66D?style=for-the-badge&logo=javascript&logoColor=black&labelColor=FFE66D)
+![TypeScript](https://img.shields.io/badge/TypeScript-A8E6CF?style=for-the-badge&logo=typescript&logoColor=black&labelColor=A8E6CF)
+![React](https://img.shields.io/badge/React-FFB6C1?style=for-the-badge&logo=react&logoColor=black&labelColor=FFB6C1)
+![Vue.js](https://img.shields.io/badge/Vue.js-DDA0DD?style=for-the-badge&logo=vue.js&logoColor=black&labelColor=DDA0DD)
+
+### ⚡ 后端力量
+![Node.js](https://img.shields.io/badge/Node.js-98FB98?style=for-the-badge&logo=node.js&logoColor=black&labelColor=98FB98)
+![Python](https://img.shields.io/badge/Python-87CEEB?style=for-the-badge&logo=python&logoColor=black&labelColor=87CEEB)
+![Go](https://img.shields.io/badge/Go-F0E68C?style=for-the-badge&logo=go&logoColor=black&labelColor=F0E68C)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-DEB887?style=for-the-badge&logo=postgresql&logoColor=black&labelColor=DEB887)
+![Redis](https://img.shields.io/badge/Redis-FFA07A?style=for-the-badge&logo=redis&logoColor=black&labelColor=FFA07A)
+
+### ☁️ 云端魔法
+![AWS](https://img.shields.io/badge/AWS-FFE4E1?style=for-the-badge&logo=amazon-aws&logoColor=black&labelColor=FFE4E1)
+![Docker](https://img.shields.io/badge/Docker-E0FFFF?style=for-the-badge&logo=docker&logoColor=black&labelColor=E0FFFF)
+![Kubernetes](https://img.shields.io/badge/K8s-F5FFFA?style=for-the-badge&logo=kubernetes&logoColor=black&labelColor=F5FFFA)
+
+</div>
+
+---
+
+## 🎮 代码大作战 | Code Battle
+<!-- 互动游戏元素 -->
+<div align="center">
+
+**🏆 挑战我的代码技能！**
+
+| 技能 | 等级 | 经验值 |
+|------|------|--------|
+| JavaScript | ⭐⭐⭐⭐⭐ | 95% ████████████████████▒ |
+| Python | ⭐⭐⭐⭐⭐ | 90% ███████████████████▒▒ |
+| React | ⭐⭐⭐⭐☆ | 85% ██████████████████▒▒▒ |
+| Node.js | ⭐⭐⭐⭐☆ | 80% █████████████████▒▒▒▒ |
+| Docker | ⭐⭐⭐☆☆ | 75% ████████████████▒▒▒▒▒ |
+
+</div>
+
+---
+
+## 📊 实时数据中心 | Live Stats
+<!-- 参考Simon Willison的自动更新理念 -->
+
+<div align="center">
+
+<img width="48%" src="https://github-readme-stats.vercel.app/api?username=zjd&show_icons=true&count_private=true&hide_border=true&title_color=ff6b6b&icon_color=4ecdc4&text_color=ffe66d&bg_color=0d1117&theme=radical" />
+<img width="48%" src="https://github-readme-streak-stats.herokuapp.com/?user=zjd&theme=radical&hide_border=true&stroke=0000&background=0D1117&ring=ff6b6b&fire=4ecdc4&currStreakLabel=ffe66d" />
+
+</div>
+
+<div align="center">
+  <img src="https://github-readme-activity-graph.vercel.app/graph?username=zjd&bg_color=0d1117&color=ff6b6b&line=4ecdc4&point=ffe66d&area=true&hide_border=true" />
+</div>
+
+---
+
+## 🐍 贡献蛇蛇 | Contribution Snake
+<!-- 经典的蛇游戏动画 -->
+<div align="center">
   
-  [![Project 1](https://github-readme-stats.vercel.app/api/pin/?username=yourusername&repo=project1&theme=tokyonight&hide_border=true)](https://github.com/yourusername/project1)
-  [![Project 2](https://github-readme-stats.vercel.app/api/pin/?username=yourusername&repo=project2&theme=tokyonight&hide_border=true)](https://github.com/yourusername/project2)
+  ![Snake animation](https://raw.githubusercontent.com/zjd/zjd/output/github-contribution-grid-snake-dark.svg)
   
 </div>
 
 ---
 
-<h2 align="center">🌐 Connect With Me</h2>
+## 🏆 成就解锁 | Achievements Unlocked
 
 <div align="center">
-  
-  [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/yourprofile)
-  [![Twitter](https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/yourhandle)
-  [![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:your.email@gmail.com)
-  [![Portfolio](https://img.shields.io/badge/Portfolio-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://yourportfolio.com)
-  [![Blog](https://img.shields.io/badge/Blog-FF5722?style=for-the-badge&logo=blogger&logoColor=white)](https://yourblog.com)
-  
+
+<!-- 自定义成就系统 -->
+🏅 **早起鸟儿** - 6AM前提交代码 50+ 次  
+🔥 **连击高手** - 连续编程 100 天  
+🌟 **开源英雄** - 贡献 20+ 个开源项目  
+🚀 **bug终结者** - 修复 500+ 个bug  
+💎 **代码艺术家** - 获得 1000+ stars  
+
 </div>
 
 ---
 
-<h2 align="center">💭 Random Dev Quote</h2>
-
-<div align="center">
-  
-  ![Quote](https://quotes-github-readme.vercel.app/api?type=horizontal&theme=tokyonight)
-  
-</div>
-
----
-
-<h2 align="center">🎵 Currently Vibing To</h2>
-
-<div align="center">
-  
-  [![spotify-github-profile](https://spotify-github-profile.vercel.app/api/view?uid=yourspotifyid&cover_image=true&theme=novatorem&show_offline=false&background_color=121212&interchange=false&bar_color=53b14f&bar_color_cover=false)](https://spotify-github-profile.vercel.app/api/view?uid=yourspotifyid&redirect=true)
-  
-</div>
-
----
-
-<div align="center">
-  
-  ![Footer](https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=200&section=footer&text=Thanks%20for%20visiting!%20🚀&fontSize=30&fontAlignY=70&desc=Let's%20build%20something%20amazing%20together&descAlignY=90&descAlign=50)
-  
-</div>
-
-<div align="center">
-  
-  ![Made with love](https://img.shields.io/badge/Made%20with-❤️-red?style=for-the-badge)
-  ![Powered by coffee](https://img.shields.io/badge/Powered%20by-☕-brown?style=for-the-badge)
-  
-</div>
-
----
-
-<details>
-<summary>🎮 Fun Stuff (Click to expand!)</summary>
-
-### 🎯 Coding Stats
+## 📅 本周编程时间 | Weekly Coding Time
+<!-- WakaTime集成 -->
 ```text
-⌚︎ Time Zone: Asia/Shanghai
+⌚︎ 本周编程时间: 42hrs 30mins
 
-💻 操作系统: 
-macOS                    12 hrs 30 mins  ████████████████████████░   75.0%
-Linux                    5 hrs 30 mins   ████████░░░░░░░░░░░░░░░░░   25.0%
+💻 最常用的编辑器:
+VS Code          30 hrs 45 mins  ████████████████████████░   72%
+Vim              8 hrs 15 mins   ████████░░░░░░░░░░░░░░░░░   19%
+WebStorm         3 hrs 30 mins   ████░░░░░░░░░░░░░░░░░░░░░   8%
 
-🔥 编辑器: 
-VS Code                  15 hrs 45 mins  ██████████████████████░░░   87.5%
-Vim                      2 hrs 15 mins   ███░░░░░░░░░░░░░░░░░░░░░░   12.5%
-
-🎯 语言: 
-TypeScript               8 hrs 30 mins   ████████████░░░░░░░░░░░░░   47.2%
-Python                   4 hrs 45 mins   ██████░░░░░░░░░░░░░░░░░░░   26.4%
-JavaScript               2 hrs 30 mins   ███░░░░░░░░░░░░░░░░░░░░░░   13.9%
-Go                       1 hr 30 mins    ██░░░░░░░░░░░░░░░░░░░░░░░   8.3%
-Rust                     45 mins         █░░░░░░░░░░░░░░░░░░░░░░░░   4.2%
+🔥 热门语言:
+TypeScript       18 hrs 20 mins  ████████████████████████░   43%
+Python           12 hrs 45 mins  ██████████████████░░░░░░░   30%
+JavaScript       8 hrs 30 mins   ████████████░░░░░░░░░░░░░   20%
+Go               3 hrs 15 mins   ████░░░░░░░░░░░░░░░░░░░░░   7%
 ```
 
-### 🏅 Achievement Unlocked
-- 🌟 **Early Adopter**: First 1000 users on 3 platforms
-- 🚀 **Open Source Hero**: 50+ contributions to major projects  
-- 🎯 **Bug Hunter**: Found and fixed 100+ critical bugs
-- 💎 **Code Quality**: 95%+ test coverage on all projects
-- 🌍 **Global Impact**: Code used by 1M+ users worldwide
+---
 
-### 🎪 Random Fun Facts
-- 🍕 Pizza is my debugging fuel
-- 🌙 Night owl developer (best code written after midnight)
-- 🎮 Gaming enthusiast (currently playing: Cyberpunk 2077)
-- 📚 Always learning (current read: "Clean Architecture")
-- 🎸 Part-time musician (ask me about my band!)
+## 🎵 当前播放 | Now Playing
+<!-- Spotify集成 -->
+<div align="center">
+  
+  [![Spotify](https://novatorem.vercel.app/api/spotify)](https://open.spotify.com/user/zjd)
+  
+</div>
 
-</details> 
+---
+
+## 📝 最新博客文章 | Latest Blog Posts
+<!-- 自动更新博客文章 -->
+<!-- BLOG-POST-LIST:START -->
+- 🚀 [构建可扩展的微服务架构](https://blog.zjd.dev/microservices-architecture)
+- 🎯 [React 18 新特性深度解析](https://blog.zjd.dev/react-18-features)
+- 💡 [TypeScript 最佳实践指南](https://blog.zjd.dev/typescript-best-practices)
+- 🔧 [Docker 容器化部署实战](https://blog.zjd.dev/docker-deployment)
+- 🌐 [前端性能优化终极指南](https://blog.zjd.dev/frontend-performance)
+<!-- BLOG-POST-LIST:END -->
+
+---
+
+## 🌐 社交宇宙 | Social Universe
+
+<div align="center">
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-ff6b6b?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/zjd)
+[![Twitter](https://img.shields.io/badge/Twitter-4ecdc4?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/zjd_dev)
+[![Blog](https://img.shields.io/badge/Blog-ffe66d?style=for-the-badge&logo=hashnode&logoColor=black)](https://blog.zjd.dev)
+[![Email](https://img.shields.io/badge/Email-a8e6cf?style=for-the-badge&logo=gmail&logoColor=black)](mailto:hi@zjd.dev)
+[![Portfolio](https://img.shields.io/badge/Portfolio-ffb6c1?style=for-the-badge&logo=vercel&logoColor=black)](https://zjd.dev)
+
+</div>
+
+---
+
+## 💭 每日一句 | Daily Quote
+
+<div align="center">
+  
+  ![Quote](https://quotes-github-readme.vercel.app/api?type=horizontal&theme=radical&border=true)
+  
+</div>
+
+---
+
+## 🎪 彩蛋区域 | Easter Egg Zone
+
+<details>
+<summary>🔮 点击发现隐藏内容...</summary>
+
+### 🎯 我的编程哲学
+```javascript
+const zjd = {
+  code: ["Clean", "Readable", "Scalable"],
+  mindset: "Build to last, not to impress",
+  coffee: "Essential fuel for debugging",
+  motto: "Make it work, make it right, make it fast",
+  
+  dailyRoutine() {
+    return [
+      "☕ Coffee",
+      "💻 Code", 
+      "🔄 Refactor",
+      "📚 Learn",
+      "🔁 Repeat"
+    ];
+  },
+  
+  currentGoal: "Building the future, one commit at a time 🚀"
+};
+```
+
+### 🏆 秘密成就
+- 🌙 **夜猫子程序员** - 凌晨2点还在写代码
+- 🍕 **披萨驱动开发** - 用披萨解决99%的编程问题  
+- 🔧 **Stack Overflow忍者** - 5分钟内找到任何bug解决方案
+- 🎮 **游戏开发者** - 业余时间制作独立游戏
+- 🎨 **UI/UX设计师** - 代码之外的艺术追求
+
+### 🎲 随机趣事
+- 🎸 会弹吉他，梦想组建程序员乐队
+- 🏃‍♂️ 马拉松爱好者，最好成绩3小时42分
+- 📚 每年读50本书的目标
+- 🌱 在家种植多肉植物
+- 🎯 正在学习日语，目标是去日本工作一年
+
+</details>
+
+---
+
+<div align="center">
+
+![Footer](https://capsule-render.vercel.app/api?type=waving&color=timeGradient&customColorList=12,2,20,25,30,32&height=200&section=footer&text=Thanks%20for%20visiting!%20🌟&fontSize=28&fontAlignY=70&desc=Let's%20build%20amazing%20things%20together&descAlignY=90&descAlign=50&animation=fadeIn)
+
+</div>
+
+<div align="center">
+  
+  ![Made with love](https://img.shields.io/badge/Made%20with-❤️%20%26%20☕-red?style=for-the-badge)
+  ![Last updated](https://img.shields.io/badge/Last%20updated-2024%2F12%2F30-blue?style=for-the-badge)
+  
+</div>
+
+---
+
+<div align="center">
+  <sub>💡 <strong>Pro Tip:</strong> 这个 README 每天自动更新！Star ⭐ 这个仓库来关注我的编程之旅</sub>
+</div> 
