@@ -61,7 +61,7 @@ text, tspan {white-space: pre;}
 <tspan x="390" y="330" class="cc">. </tspan><tspan class="key">Email</tspan>.<tspan class="key">Personal</tspan>:<tspan class="cc"> ................. </tspan><tspan class="value">2157429750@qq.com</tspan>
 <tspan x="390" y="350" class="cc">. </tspan><tspan class="key">GitHub</tspan>:<tspan class="cc"> ................................. </tspan><tspan class="value">Zhang-Jingdian</tspan>
 <tspan x="390" y="370" class="cc">. </tspan><tspan class="key">Location</tspan>:<tspan class="cc"> ............................... </tspan><tspan class="value">China</tspan>
-<tspan x="390" y="390" class="cc">. </tspan><tspan class="key">Status</tspan>:<tspan class="cc"> ................... </tspan><tspan class="value">Learning & Building Cool Stuff 🚀</tspan>
+<tspan x="390" y="390" class="cc">. </tspan><tspan class="key">Status</tspan>:<tspan class="cc"> ................... </tspan><tspan class="value">Learning &amp; Building Cool Stuff</tspan>
 <tspan x="390" y="410" class="cc">. </tspan>
 <tspan x="390" y="450">- GitHub Stats</tspan> -—————————————————————————————————————————-—-
 <tspan x="390" y="470" class="cc">. </tspan><tspan class="key">Repos</tspan>:<tspan class="cc" id="repo_data_dots"> .... </tspan><tspan class="value" id="repo_data">95</tspan> {<tspan class="key">Contributed</tspan>: <tspan class="value" id="contrib_data">133</tspan>} | <tspan class="key">Stars</tspan>:<tspan class="cc" id="star_data_dots"> ........... </tspan><tspan class="value" id="star_data">342</tspan>
