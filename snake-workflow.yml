@@ -1,34 +1,46 @@
-name: Generate Snake Animation
+name: Update GitHub Stats
 
-# Controls when the action will run. Triggers the workflow on schedule
-# Runs at 12am UTC
+# Andrew6rant style automated stats generation
+# Runs every 6 hours to keep stats fresh
 on:
   schedule:
-    - cron: "0 0 * * *"
-  workflow_dispatch:
+    - cron: "0 */6 * * *"  # Every 6 hours
+  workflow_dispatch:  # Allow manual triggering
+  push:
+    branches: [ main ]
 
 jobs:
-  generate:
+  update-stats:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     
     steps:
-      # Generates the snake  
-      - name: Generate github-contribution-grid-snake.svg
-        uses: Platane/snk/svg-only@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
-          github_user_name: ${{ github.repository_owner }}
-          outputs: |
-            dist/github-contribution-grid-snake.svg
-            dist/github-contribution-grid-snake-dark.svg?palette=github-dark
-            dist/github-contribution-grid-snake.gif?color_snake=orange&color_dots=#bfd6f6,#8dbdff,#64a1f4,#4b91f1,#3c7dd9
-
-      # Push the content of <build_dir> to a branch
-      # The content will be available at https://raw.githubusercontent.com/<github_user>/<repository>/<target_branch>/<file> , or as github page
-      - name: Push github-contribution-grid-snake.svg to the output branch
-        uses: crazy-max/ghaction-github-pages@v3.1.0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          target_branch: output
-          build_dir: dist
+          python-version: '3.9'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+      
+      - name: Generate GitHub statistics
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+        run: |
+          python generate_stats.py
+      
+      - name: Commit and push if changed
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          git diff --staged --quiet || git commit -m "🤖 Auto-update GitHub stats [$(date +'%Y-%m-%d %H:%M:%S UTC')]"
+          git push 

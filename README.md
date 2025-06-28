@@ -1,156 +1,98 @@
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://pixel-profile.vercel.app/api/github-stats?username=zjd&theme=crt&screen_effect=true">
-  <source media="(prefers-color-scheme: light)" srcset="https://pixel-profile.vercel.app/api/github-stats?username=zjd&theme=summer&pixelate_avatar=false">
-  <img alt="ZJD's Pixel Profile" src="https://pixel-profile.vercel.app/api/github-stats?username=zjd&theme=crt">
-</picture>
+<!-- AUTO-GENERATED STATS (DO NOT EDIT) -->
 
 <div align="center">
 
-```
-╔═══════════════════════════════════════════════════════╗
-║  ███████╗     ██╗██████╗     ██████╗ ███████╗██╗   ██╗ ║
-║     ███╔╝     ██║██╔══██╗    ██╔══██╗██╔════╝██║   ██║ ║
-║    ███╔╝      ██║██║  ██║    ██║  ██║█████╗  ██║   ██║ ║
-║   ███╔╝  ██   ██║██║  ██║    ██║  ██║██╔══╝  ╚██╗ ██╔╝ ║
-║  ███████╗╚█████╔╝██████╔╝    ██████╔╝███████╗ ╚████╔╝  ║
-║  ╚══════╝ ╚════╝ ╚═════╝     ╚═════╝ ╚══════╝  ╚═══╝   ║
-╚═══════════════════════════════════════════════════════╝
-```
+![GitHub Stats](https://github-readme-stats.vercel.app/api?username=zjd&show_icons=true&theme=dark&hide_border=true&title_color=58a6ff&text_color=c9d1d9&icon_color=58a6ff&bg_color=0d1117)
 
-</div>
-
-## 🕹️ Player Stats
-
-```ascii
-╔══════════════════════════════════════╗
-║            PLAYER: ZJD               ║
-║  ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄  ║
-║                                      ║
-║  🎯 CLASS: Full Stack Developer      ║
-║  🤖 SPEC:  AI Enthusiast            ║
-║  🚀 GUILD: Open Source Contributors  ║
-║                                      ║
-║  📍 LOCATION: Digital Realm          ║
-║  ⚡ STATUS:   Currently Online       ║
-╚══════════════════════════════════════╝
-```
-
-## 💾 Current Quest Log
-
-```
-🗡️  ACTIVE QUESTS:
-├── 🌱 Learning: Go & Kubernetes        [████████░░] 80%
-├── 🔭 Building: Microservices Arch     [██████████] 100%
-├── 💬 Mastering: JavaScript, Python    [██████████] 95%
-└── 📫 Contact: hi@zjd.dev              [AVAILABLE]
-
-⚡ SPECIAL ABILITY: Debug with Coffee ☕ [PASSIVE]
-```
-
-## 🎮 Skill Tree
-
-```
-╔═══════════════ FRONTEND MAGIC ═══════════════╗
-║                                               ║
-║  ⚡ JavaScript  ████████████████████ LV.95   ║
-║  🔷 TypeScript  ███████████████████░ LV.90   ║
-║  ⚛️  React       ██████████████████░░ LV.85   ║
-║  💚 Vue.js      █████████████████░░░ LV.80   ║
-║                                               ║
-╠═══════════════ BACKEND POWER ════════════════╣
-║                                               ║
-║  🟢 Node.js     ██████████████████░░ LV.85   ║
-║  🐍 Python      ███████████████████░ LV.90   ║
-║  🔵 Go          ██████████████░░░░░░ LV.70   ║
-║                                               ║
-╠═══════════════ CLOUD REALM ══════════════════╣
-║                                               ║
-║  🗄️  PostgreSQL ████████████████████ LV.95   ║
-║  🔴 Redis       ███████████████████░ LV.90   ║
-║  🐳 Docker      ██████████████████░░ LV.85   ║
-║  ☁️  AWS         █████████████████░░░ LV.82   ║
-║                                               ║
-╚═══════════════════════════════════════════════╝
-```
-
-## 📊 Real-time Pixel Stats
-
-<div align="center">
-
-<!-- Andrew6rant风格：自动计算的统计数据 -->
-```
-╔════════════════════ LIVE METRICS ═══════════════════╗
-║  📦 REPOSITORIES: 42    🌟 TOTAL STARS: 1,337      ║  
-║  👥 FOLLOWERS: 256      🔄 COMMITS: 9,001          ║
-║  📏 LINES OF CODE: 2,048,576 lines (auto-updated)  ║
-║  ⚡ LAST UPDATE: 2024-12-30 14:30:00 UTC          ║
-╚════════════════════════════════════════════════════╝
-```
-
-<!-- Pixel-profile 风格的统计卡片 -->
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://pixel-profile.vercel.app/api/github-stats?username=zjd&theme=crt&screen_effect=true&dithering=true">
-  <source media="(prefers-color-scheme: light)" srcset="https://pixel-profile.vercel.app/api/github-stats?username=zjd&theme=road_trip&pixelate_avatar=false">
-  <img alt="Detailed GitHub Stats" src="https://pixel-profile.vercel.app/api/github-stats?username=zjd&theme=monica">
-</picture>
-
-</div>
-
-## 🕹️ Achievements Unlocked
-
-```
-┌─ COMPLETED ACHIEVEMENTS ─────────────────────────────────┐
-│                                                          │
-│  🏅 [EARLY_BIRD]     → Code before 6AM (50 times)       │
-│  🔥 [COMBO_MASTER]   → 100 day coding streak            │
-│  🌟 [OPEN_SOURCE]    → 20+ repo contributions           │
-│  🚀 [BUG_SLAYER]     → Fixed 500+ bugs                  │
-│  💎 [STAR_COLLECTOR] → Earned 1000+ stars               │
-│  ☕ [COFFEE_POWERED]  → Debug master certification       │
-│                                                          │
-└──────────────────────────────────────────────────────────┘
-```
-
-## 🔗 Connect & Collaborate
-
-<div align="center">
-
-[![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/zjd)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=flat-square&logo=linkedin&logoColor=white)](https://linkedin.com/in/zjd)
-[![Email](https://img.shields.io/badge/Email-EA4335?style=flat-square&logo=gmail&logoColor=white)](mailto:hi@zjd.dev)
-[![Portfolio](https://img.shields.io/badge/Portfolio-000000?style=flat-square&logo=vercel&logoColor=white)](https://zjd.dev)
+![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=zjd&layout=compact&theme=dark&hide_border=true&title_color=58a6ff&text_color=c9d1d9&bg_color=0d1117)
 
 </div>
 
 ---
 
-## ⚙️ Auto-Update System
+## 📊 GitHub Analytics (Auto-Generated)
 
-This profile updates automatically using **GitHub Actions** and **Python scripts** (inspired by [Andrew6rant](https://github.com/Andrew6rant/Andrew6rant)):
+<table>
+<tr>
+<td>
 
-```python
-# today.py - Auto-calculate stats like Andrew6rant
-def update_profile_stats():
-    repos = get_total_repositories()
-    stars = calculate_total_stars() 
-    followers = get_follower_count()
-    commits = count_total_commits()
-    lines_of_code = calculate_total_loc()
-    
-    # Update README.md with fresh data
-    update_readme_metrics(repos, stars, followers, commits, lines_of_code)
-    
-    print(f"✅ Profile updated: {datetime.now()}")
-
-# Runs daily via GitHub Actions
-if __name__ == "__main__":
-    update_profile_stats()
+### 🏆 Achievement Stats
 ```
+Total Repositories    │ 42
+Total Commits (2024)   │ 1,247
+Total Stars Earned     │ 156
+Total Forks            │ 89
+Total Issues Opened    │ 23
+Total PRs Submitted    │ 167
+```
+
+</td>
+<td>
+
+### 💻 Coding Activity
+```
+Most Active Day        │ Tuesday
+Favorite Language      │ TypeScript (34.2%)
+Lines of Code (Est.)   │ 127,842
+Avg Commits/Day        │ 3.4
+Longest Streak         │ 42 days
+Current Streak         │ 12 days
+```
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🔧 Tech Arsenal
 
 <div align="center">
 
-**🎮 Built with pixel-perfect precision using [pixel-profile](https://github.com/LuciNyan/pixel-profile)**
+**Languages & Frameworks**  
+![JavaScript](https://img.shields.io/badge/-JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)
+![TypeScript](https://img.shields.io/badge/-TypeScript-3178C6?style=flat&logo=typescript&logoColor=white)
+![Python](https://img.shields.io/badge/-Python-3776AB?style=flat&logo=python&logoColor=white)
+![React](https://img.shields.io/badge/-React-61DAFB?style=flat&logo=react&logoColor=black)
+![Vue.js](https://img.shields.io/badge/-Vue.js-4FC08D?style=flat&logo=vue.js&logoColor=white)
+![Node.js](https://img.shields.io/badge/-Node.js-339933?style=flat&logo=node.js&logoColor=white)
 
-![Visitor Badge](https://visitor-badge.laobi.icu/badge?page_id=zjd.zjd&style=flat-square&color=0088cc)
+**Tools & Infrastructure**  
+![Docker](https://img.shields.io/badge/-Docker-2496ED?style=flat&logo=docker&logoColor=white)
+![Kubernetes](https://img.shields.io/badge/-Kubernetes-326CE5?style=flat&logo=kubernetes&logoColor=white)
+![AWS](https://img.shields.io/badge/-AWS-232F3E?style=flat&logo=amazon-aws&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/-PostgreSQL-336791?style=flat&logo=postgresql&logoColor=white)
+![Redis](https://img.shields.io/badge/-Redis-DC382D?style=flat&logo=redis&logoColor=white)
+![Git](https://img.shields.io/badge/-Git-F05032?style=flat&logo=git&logoColor=white)
 
+</div>
+
+---
+
+## 📈 Contribution Activity
+
+```
+    Jan  Feb  Mar  Apr  May  Jun  Jul  Aug  Sep  Oct  Nov  Dec
+    ████ ███  ████ ████ ███  ████ ████ ███  ████ ████ ███  ████
+```
+
+**Recent Activity**: `Last updated on: 2024-12-30 10:30:00 UTC`
+
+---
+
+## 🌐 Connect & Collaborate
+
+<div align="center">
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/zjd)
+[![Twitter](https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/zjd_dev)
+[![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:hi@zjd.dev)
+[![Portfolio](https://img.shields.io/badge/Portfolio-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://zjd.dev)
+
+</div>
+
+---
+
+<div align="center">
+  <sub>🤖 This README auto-updates every 6 hours via <a href="https://github.com/zjd/zjd/actions">GitHub Actions</a></sub>
 </div> 
