@@ -5,6 +5,14 @@ import os
 import xml.etree.ElementTree as etree
 import time
 import hashlib
+import io
+
+try:
+    from PIL import Image
+    PIL_AVAILABLE = True
+except ImportError:
+    PIL_AVAILABLE = False
+    print("Warning: Pillow not available. ASCII avatar generation will be disabled.")
 
 # Fine-grained personal access token with All Repositories access:
 # Account permissions: read:Followers, read:Starring, read:Watching
@@ -362,6 +370,110 @@ def find_and_replace(root, element_id, new_text):
         element.text = new_text
 
 
+def generate_ascii_avatar(avatar_url, width=35, height=25):
+    """
+    Download user avatar and convert to ASCII art
+    """
+    if not PIL_AVAILABLE:
+        print("PIL not available, using fallback ASCII pattern")
+        # Create a simple pattern as fallback
+        pattern = [
+            "    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@",
+            "  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@",
+            " @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@",
+            "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@",
+            "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@",
+            "@@@@@@@@@@@@@@   @@@@@@@@@@@@@@@@@@@@@",
+            "@@@@@@@@@@@@@     @@@@@@@@@@@@@@@@@@@@",
+            "@@@@@@@@@@@@   @   @@@@@@@@@@@@@@@@@@@",
+            "@@@@@@@@@@@   @@@   @@@@@@@@@@@@@@@@@@",
+            "@@@@@@@@@@   @@@@@   @@@@@@@@@@@@@@@@@",
+            "@@@@@@@@@   @@@@@@@   @@@@@@@@@@@@@@@@",
+            "@@@@@@@@   @@@@@@@@@   @@@@@@@@@@@@@@@",
+            "@@@@@@@   @@@@@@@@@@@   @@@@@@@@@@@@@@",
+            "@@@@@@   @@@@@@@@@@@@@   @@@@@@@@@@@@@",
+            "@@@@@   @@@@@@@@@@@@@@@   @@@@@@@@@@@@",
+            "@@@@   @@@@@@@@@@@@@@@@@   @@@@@@@@@@@",
+            "@@@   @@@@@@@@@@@@@@@@@@@   @@@@@@@@@@",
+            "@@   @@@@@@@@@@@@@@@@@@@@@   @@@@@@@@@",
+            "@   @@@@@@@@@@@@@@@@@@@@@@@   @@@@@@@@",
+            "  @@@@@@@@@@@@@@@@@@@@@@@@@@@  @@@@@@@",
+            " @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @@@@@@",
+            "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @@@@@",
+            "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @@@",
+            "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @@",
+            "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @"
+        ]
+        return pattern[:height]
+    
+    try:
+        # Download avatar image
+        response = requests.get(avatar_url)
+        response.raise_for_status()
+        
+        # Open image with Pillow
+        image = Image.open(io.BytesIO(response.content))
+        
+        # Resize image
+        image = image.resize((width, height))
+        
+        # Convert to grayscale
+        image = image.convert('L')
+        
+        # ASCII characters from darkest to lightest
+        ascii_chars = "@%#*+=-:. "
+        
+        # Convert pixels to ASCII
+        ascii_lines = []
+        pixels = list(image.getdata())
+        
+        for i in range(0, len(pixels), width):
+            line = ""
+            for j in range(width):
+                if i + j < len(pixels):
+                    pixel = pixels[i + j]
+                    ascii_char = ascii_chars[min(pixel // 28, len(ascii_chars) - 1)]
+                    line += ascii_char
+            ascii_lines.append(line)
+            
+        return ascii_lines
+        
+    except Exception as e:
+        print(f"Error generating ASCII avatar: {e}")
+        # Fallback to simple pattern
+        return ["@" * width for _ in range(height)]
+
+
+def update_svg_ascii_art(filename, ascii_lines):
+    """
+    Update the ASCII art section in SVG file
+    """
+    tree = etree.parse(filename)
+    root = tree.getroot()
+    
+    # Find the ASCII art text element
+    ascii_text = root.find(".//*[@class='ascii']")
+    if ascii_text is not None:
+        # Clear existing tspan elements
+        ascii_text.clear()
+        ascii_text.set('x', '15')
+        ascii_text.set('y', '30')
+        if filename == 'dark_mode.svg':
+            ascii_text.set('fill', '#c9d1d9')
+        else:
+            ascii_text.set('fill', '#24292f')
+        ascii_text.set('class', 'ascii')
+        
+        # Add new ASCII art
+        for i, line in enumerate(ascii_lines):
+            tspan = etree.SubElement(ascii_text, 'tspan')
+            tspan.set('x', '15')
+            tspan.set('y', str(30 + i * 20))
+            tspan.text = line.ljust(35)  # Pad to consistent width
+    
+    tree.write(filename, encoding='utf-8', xml_declaration=True)
+
+
 def commit_counter(comment_size):
     """
     Counts up my total commits, using the cache file created by cache_builder.
@@ -379,7 +491,7 @@ def commit_counter(comment_size):
 
 def user_getter(username):
     """
-    Returns the account ID and creation time of the user
+    Returns the account ID, creation time, and avatar URL of the user
     """
     query_count('user_getter')
     query = '''
@@ -387,11 +499,13 @@ def user_getter(username):
         user(login: $login) {
             id
             createdAt
+            avatarUrl
         }
     }'''
     variables = {'login': username}
     request = simple_request(user_getter.__name__, query, variables)
-    return {'id': request.json()['data']['user']['id']}, request.json()['data']['user']['createdAt']
+    user_data = request.json()['data']['user']
+    return {'id': user_data['id']}, user_data['createdAt'], user_data['avatarUrl']
 
 def follower_getter(username):
     """
@@ -447,9 +561,13 @@ if __name__ == '__main__':
     print('Calculation times:')
     # define global variable for owner ID and calculate user's creation date
     # e.g {'id': 'MDQ6VXNlcjU3MzMxMTM0'} and 2019-11-03T21:15:07Z for username 'Andrew6rant'
-    user_data, user_time = perf_counter(user_getter, USER_NAME)
-    OWNER_ID, acc_date = user_data
+    user_result, user_time = perf_counter(user_getter, USER_NAME)
+    OWNER_ID, acc_date, avatar_url = user_result
     formatter('account data', user_time)
+    
+    # Generate ASCII avatar
+    print('Generating ASCII avatar...')
+    ascii_avatar = generate_ascii_avatar(avatar_url)
     age_data, age_time = perf_counter(daily_readme, datetime.datetime(2024, 8, 28))
     formatter('age calculation', age_time)
     total_loc, loc_time = perf_counter(loc_query, ['OWNER', 'COLLABORATOR', 'ORGANIZATION_MEMBER'], 7)
@@ -466,6 +584,10 @@ if __name__ == '__main__':
 
     svg_overwrite('dark_mode.svg', age_data, commit_data, star_data, repo_data, contrib_data, follower_data, total_loc[:-1])
     svg_overwrite('light_mode.svg', age_data, commit_data, star_data, repo_data, contrib_data, follower_data, total_loc[:-1])
+    
+    # Update ASCII avatars in both SVG files
+    update_svg_ascii_art('dark_mode.svg', ascii_avatar)
+    update_svg_ascii_art('light_mode.svg', ascii_avatar)
 
     # move cursor to override 'Calculation times:' with 'Total function time:' and the total function time, then move cursor back
     print('\033[F\033[F\033[F\033[F\033[F\033[F\033[F\033[F',
