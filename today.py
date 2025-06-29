@@ -218,19 +218,18 @@ def update_svg_ascii_art(svg_path, avatar_url):
     root = tree.getroot()
     ns = {'svg': 'http://www.w3.org/2000/svg'}
     
-    art_container = root.find(".//*[@id='ascii-art-container']", namespaces=ns)
+    art_container = root.find(".//*[@id='ascii-art']", namespaces=ns)
     if art_container is None: return
 
     # Clear previous art
     for element in list(art_container):
         art_container.remove(element)
 
-    text_element = etree.Element("text")
+    # Add new art
     for i, line in enumerate(ascii_art.split('\n')):
-        tspan = etree.SubElement(text_element, "tspan", x="0", dy="1em")
+        tspan = etree.SubElement(art_container, "tspan", x="0", dy="1.1em")
         tspan.text = line
-        tspan.tail = "\n"  # Ensure each tspan is on a new line for readability
-    art_container.append(text_element)
+        tspan.tail = "\n"
     
     tree.write(svg_path, pretty_print=True, xml_declaration=True, encoding='UTF-8')
 
@@ -261,37 +260,15 @@ def main():
         stats = {'commits': commits, 'stars': stars, 'followers': followers}
         
         pbar.set_description("🖼️ Updating dark mode SVG")
-        for svg_file in ['dark_mode.svg', 'light_mode.svg']:
-            update_svg_data(svg_file, stats)
-            update_svg_contrib_graph(svg_file, contrib_data)
-            update_svg_ascii_art(svg_file, avatar_url)
+        update_svg_data('dark_mode.svg', stats)
+        update_svg_contrib_graph('dark_mode.svg', contrib_data)
+        update_svg_ascii_art('dark_mode.svg', avatar_url)
         pbar.update(1)
         
         pbar.set_description("💡 Updating light mode SVG")
-        # Creating light_mode.svg from dark_mode.svg
-        with open('dark_mode.svg', 'r') as f:
-            light_mode_content = f.read()
-        
-        # Replace colors for light mode
-        color_replacements = {
-            '#202020': '#ffffff',  # bg
-            '#e0e0e0': '#333333',  # text
-            '#a5d6ff': '#007bff',   # title
-            '#c9d1d9': '#555555',   # subtitle, ascii
-            '#ffa657': '#ff8c00',   # headers
-            '#444': '#dddddd',       # chart stroke
-            '#2a2a2a': '#eeeeee',   # cell stroke
-            '#333': '#ebedf0',       # level 0
-            '#0e4429': '#9be9a8',   # level 1
-            '#006d32': '#40c463',   # level 2
-            '#26a641': '#30a14e',   # level 3
-            '#39d353': '#216e39'    # level 4
-        }
-        for dark, light in color_replacements.items():
-            light_mode_content = light_mode_content.replace(dark, light)
-        
-        with open('light_mode.svg', 'w') as f:
-            f.write(light_mode_content)
+        update_svg_data('light_mode.svg', stats)
+        update_svg_contrib_graph('light_mode.svg', contrib_data)
+        update_svg_ascii_art('light_mode.svg', avatar_url)
         pbar.update(1)
 
     print("\n✅ GitHub profile updated successfully!")
