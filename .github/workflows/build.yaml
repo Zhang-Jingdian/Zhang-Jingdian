@@ -8,8 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    if: ${{ !contains(github.event.head_commit.message, 'skip ci') }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -39,5 +38,5 @@ jobs:
           git diff
           git config --global user.email "2157429750@qq.com"
           git config --global user.name "Zhang-Jingdian/GitHub-Actions-Bot"
-          git commit -m "Updated README" -a || echo "No changes to commit"
+          git commit -m "Updated README [skip ci]" -a || echo "No changes to commit"
           git push
