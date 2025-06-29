@@ -90,13 +90,12 @@ def format_plural(unit):
 
 def simple_request(func_name, query, variables):
     """
-    Send a simple request to the GitHub API
+    Returns a request, or raises an Exception if the response does not succeed.
     """
     request = requests.post('https://api.github.com/graphql', json={'query': query, 'variables':variables}, headers=HEADERS)
     if request.status_code == 200:
         return request
-    else:
-        raise Exception(f"请求失败，状态码：{request.status_code}, {request.text}")
+    raise Exception(func_name, ' has failed with a', request.status_code, request.text, QUERY_COUNT)
 
 
 def graph_commits(start_date, end_date):
@@ -196,7 +195,7 @@ def recursive_loc(owner, repo_name, data, cache_comment, addition_total=0, delet
     request = requests.post('https://api.github.com/graphql', json={'query': query, 'variables':variables}, headers=HEADERS) # I cannot use simple_request(), because I want to save the file before raising Exception
     if request.status_code == 200:
         if request.json()['data']['repository']['defaultBranchRef'] != None: # Only count commits if repo isn't empty
-            return loc_counter_one_repo(owner, repo_name)
+            return loc_counter_one_repo(owner, repo_name, data, cache_comment, request.json()['data']['repository']['defaultBranchRef']['target']['history'], addition_total, deletion_total, my_commits)
         else: return 0
     force_close_file(data, cache_comment) # saves what is currently in the file before this program crashes
     if request.status_code == 403:
@@ -204,99 +203,51 @@ def recursive_loc(owner, repo_name, data, cache_comment, addition_total=0, delet
     raise Exception('recursive_loc() has failed with a', request.status_code, request.text, QUERY_COUNT)
 
 
-def loc_counter_one_repo(owner, repo_name):
+def loc_counter_one_repo(owner, repo_name, data, cache_comment, history, addition_total, deletion_total, my_commits):
     """
-    Get the total lines of code for a single repository using iteration.
+    Recursively call recursive_loc (since GraphQL can only search 100 commits at a time) 
+    only adds the LOC value of commits authored by me
     """
-    total_additions = 0
-    total_deletions = 0
-    cursor = None
+    commits = history['edges']
     
-    while True:
-        query = """
-        query ($owner: String!, $repo_name: String!, $cursor: String) {
-          repository(owner: $owner, name: $repo_name) {
-            defaultBranchRef {
-              target {
-                ... on Commit {
-                  history(first: 100, after: $cursor) {
-                    pageInfo {
-                      hasNextPage
-                      endCursor
-                    }
-                    edges {
-                      node {
-                        ... on Commit {
-                          committedDate
-                          additions
-                          deletions
-                          author {
-                            user {
-                              login
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-        """
-        variables = {'owner': owner, 'repo_name': repo_name, 'cursor': cursor}
-        
-        try:
-            request = simple_request(f"loc_counter_{owner}_{repo_name}", query, variables)
-            data = request.json()
-            
-            if data.get('errors'):
-                print(f"  - ❌ 在仓库 {owner}/{repo_name} 中发生GraphQL错误: {data['errors'][0]['message']}")
-                break
+    # 使用进度条显示commits处理进度
+    for node in progress_bar(commits, desc=f"处理 {repo_name} 的提交", disable=len(commits) < 10):
+        if node['node']['author']['user'] == OWNER_ID:
+            my_commits += 1
+            addition_total += node['node']['additions']
+            deletion_total += node['node']['deletions']
 
-            if not (data.get('data') and data['data'].get('repository') and data['data']['repository'].get('defaultBranchRef') and data['data']['repository']['defaultBranchRef'].get('target')):
-                print(f"  - ⚠️  跳过仓库 {owner}/{repo_name} (可能是空的或无法访问)")
-                break
-                
-            history = data['data']['repository']['defaultBranchRef']['target']['history']
-            
-            for commit in history['edges']:
-                node = commit['node']
-                if node and node.get('author') and node['author'].get('user') and node['author']['user']['login'] == USER_NAME:
-                    total_additions += node['additions']
-                    total_deletions += node['deletions']
-
-            if history['pageInfo']['hasNextPage']:
-                cursor = history['pageInfo']['endCursor']
-                # 添加一个小的延迟避免API速率限制
-                time.sleep(0.1) 
-            else:
-                break
-                
-        except (requests.exceptions.RequestException, KeyError, TypeError) as e:
-            print(f"  - ❌ 在处理 {owner}/{repo_name} 时发生错误: {e}")
-            break
-            
-    return total_additions, total_deletions
+    if history['edges'] == [] or not history['pageInfo']['hasNextPage']:
+        return addition_total, deletion_total, my_commits
+    else: 
+        return recursive_loc(owner, repo_name, data, cache_comment, addition_total, deletion_total, my_commits, history['pageInfo']['endCursor'])
 
 
-def repo_getter(owner_affiliation, cursor=None, edges=None):
+def loc_query(owner_affiliation, comment_size=0, force_cache=False, cursor=None, edges=[]):
     """
-    Get all repositories for the user with given affiliations.
+    Uses GitHub's GraphQL v4 API to query all the repositories I have access to (with respect to owner_affiliation)
+    Queries 60 repos at a time, because larger queries give a 502 timeout error and smaller queries send too many
+    requests and also give a 502 error.
+    Returns the total number of lines of code in all repositories
     """
-    if edges is None:
-        edges = []
-        
-    query = """
+    query_count('loc_query')
+    query = '''
     query ($owner_affiliation: [RepositoryAffiliation], $login: String!, $cursor: String) {
         user(login: $login) {
-            repositories(first: 100, after: $cursor, ownerAffiliations: $owner_affiliation) {
-                edges {
-                    node {
-                        name
-                        owner {
-                            login
+            repositories(first: 60, after: $cursor, ownerAffiliations: $owner_affiliation) {
+            edges {
+                node {
+                    ... on Repository {
+                        nameWithOwner
+                        defaultBranchRef {
+                            target {
+                                ... on Commit {
+                                    history {
+                                        totalCount
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -306,60 +257,14 @@ def repo_getter(owner_affiliation, cursor=None, edges=None):
                 }
             }
         }
-    }
-    """
+    }'''
     variables = {'owner_affiliation': owner_affiliation, 'login': USER_NAME, 'cursor': cursor}
-    request = simple_request(repo_getter.__name__, query, variables)
-    data = request.json()['data']['user']['repositories']
-    
-    edges.extend(data['edges'])
-    
-    if data['pageInfo']['hasNextPage']:
-        return repo_getter(owner_affiliation, data['pageInfo']['endCursor'], edges)
+    request = simple_request(loc_query.__name__, query, variables)
+    if request.json()['data']['user']['repositories']['pageInfo']['hasNextPage']:   # If repository data has another page
+        edges += request.json()['data']['user']['repositories']['edges']            # Add on to the LoC count
+        return loc_query(owner_affiliation, comment_size, force_cache, request.json()['data']['user']['repositories']['pageInfo']['endCursor'], edges)
     else:
-        return edges
-
-
-def loc_query(owner_affiliation, force_cache=True):
-    """
-    Get the total lines of code contributed by the user
-    """
-    print_progress(7, "统计总代码贡献量 (LOC)...")
-    
-    # 1. 获取仓库列表
-    edges = repo_getter(owner_affiliation)
-    
-    # 2. 从缓存中加载数据
-    # cache/3ca...9.txt
-    filename = 'cache/' + hashlib.sha256(USER_NAME.encode('utf-8')).hexdigest() + '.txt'
-    if os.path.exists(filename) and not force_cache:
-        with open(filename, 'r') as f:
-            data = f.read()
-            # ... (省略缓存处理)
-            
-    # 3. 如果没有缓存或强制更新，则查询API
-    print("  - 仓库列表已获取，开始处理每个仓库的提交...")
-    
-    total_additions = 0
-    total_deletions = 0
-    
-    repo_progress = tqdm(edges, desc="  - 正在统计所有仓库", unit="repo")
-    for repo in repo_progress:
-        repo_name = repo['node']['name']
-        owner = repo['node']['owner']['login']
-        repo_progress.set_description(f"  - 正在处理 {owner}/{repo_name}")
-        
-        # 迭代获取每个仓库的提交
-        additions, deletions = loc_counter_one_repo(owner, repo_name)
-        total_additions += additions
-        total_deletions += deletions
-        
-    # 4. 写入缓存
-    cache_data = f"add:{total_additions}\ndel:{total_deletions}\n"
-    with open(filename, 'w') as f:
-        f.write(cache_data)
-        
-    return total_additions, total_deletions
+        return cache_builder(edges + request.json()['data']['user']['repositories']['edges'], comment_size, force_cache)
 
 
 def cache_builder(edges, comment_size, force_cache, loc_add=0, loc_del=0):
@@ -388,23 +293,37 @@ def cache_builder(edges, comment_size, force_cache, loc_add=0, loc_del=0):
     cache_comment = data[:comment_size] # save the comment block
     data = data[comment_size:] # remove those lines
     for index in range(len(edges)):
-        repo_hash, commit_count, *__ = data[index].split()
+        line = data[index].strip()
+        if not line: # Skip empty lines
+            print(f"⚠️  跳过缓存中的空行，索引: {index}")
+            continue
+
+        parts = line.split()
+        if len(parts) < 2:
+            print(f"⚠️  跳过格式不正确的缓存行: '{line}'")
+            continue
+
+        repo_hash, commit_count = parts[0], parts[1]
+        
         if repo_hash == hashlib.sha256(edges[index]['node']['nameWithOwner'].encode('utf-8')).hexdigest():
             try:
                 if int(commit_count) != edges[index]['node']['defaultBranchRef']['target']['history']['totalCount']:
                     # if commit count has changed, update loc for that repo
                     owner, repo_name = edges[index]['node']['nameWithOwner'].split('/')
-                    loc = recursive_loc(owner, repo_name)
-                    data[index] = repo_hash + ' ' + str(edges[index]['node']['defaultBranchRef']['target']['history']['totalCount']) + ' ' + str(loc[0]) + ' ' + str(loc[1]) + '\n'
+                    loc = recursive_loc(owner, repo_name, data, cache_comment)
+                    data[index] = repo_hash + ' ' + str(edges[index]['node']['defaultBranchRef']['target']['history']['totalCount']) + ' ' + str(loc[2]) + ' ' + str(loc[0]) + ' ' + str(loc[1]) + '\n'
             except TypeError: # If the repo is empty
-                data[index] = repo_hash + ' 0 0 0\n'
+                data[index] = repo_hash + ' 0 0 0 0\n'
     with open(filename, 'w') as f:
         f.writelines(cache_comment)
         f.writelines(data)
     for line in data:
+        line = line.strip()
+        if not line: continue
         loc = line.split()
-        loc_add += int(loc[2])
-        loc_del += int(loc[3])
+        if len(loc) >= 5:
+            loc_add += int(loc[3])
+            loc_del += int(loc[4])
     return [loc_add, loc_del, loc_add - loc_del, cached]
 
 
@@ -420,7 +339,7 @@ def flush_cache(edges, filename, comment_size):
     with open(filename, 'w') as f:
         f.writelines(data)
         for node in edges:
-            f.write(hashlib.sha256(node['node']['nameWithOwner'].encode('utf-8')).hexdigest() + ' 0 0 0\n')
+            f.write(hashlib.sha256(node['node']['nameWithOwner'].encode('utf-8')).hexdigest() + ' 0 0 0 0\n')
 
 
 def add_archive():
@@ -517,37 +436,36 @@ def commit_counter(comment_size):
         with open(filename, 'r') as f:
             data = f.readlines()
         
-        cache_comment = data[:comment_size] # save the comment block
-        data = data[comment_size:] # remove those lines
+        # 移除注释块
+        if comment_size > 0 and data and "This line is a comment block" in data[0]:
+            data = data[comment_size:]
         
-        for line_num, line in enumerate(data, start=comment_size + 1):
+        for line_num, line in enumerate(data, start=1):
             line = line.strip()
-            if not line:  # 跳过空行
+            if not line or line.startswith('#') or ':' in line:  # 跳过空行、注释或特殊格式
                 continue
                 
             parts = line.split()
-            if len(parts) < 3:  # 确保有足够的部分
-                print(f"⚠️  跳过格式不正确的行 {line_num}: {line}")
-                continue
-                
-            try:
-                commit_count = int(parts[2])  # 尝试转换第3个字段为整数
-                total_commits += commit_count
-            except ValueError as e:
-                print(f"⚠️  跳过无法解析的行 {line_num}: {line} (错误: {e})")
-                continue
+            if len(parts) >= 2:  # 确保至少有 repo_hash 和 commit_count
+                try:
+                    # 第二个元素应该是总提交数
+                    commit_count = int(parts[1])
+                    total_commits += commit_count
+                except (ValueError, IndexError) as e:
+                    print(f"⚠️  在行 {line_num} 解析提交数时出错: '{line}' (错误: {e})")
+            else:
+                print(f"⚠️  跳过格式不正确的行 {line_num}: '{line}'")
                 
     except FileNotFoundError:
         print(f"⚠️  缓存文件不存在: {filename}")
         return 0
     except Exception as e:
         print(f"❌ 读取缓存文件时出错: {e}")
-        return 0
         
     return total_commits
 
 
-def user_getter():
+def user_getter(username):
     """
     Returns the account ID, creation time, and avatar URL of the user
     """
@@ -560,26 +478,26 @@ def user_getter():
             avatarUrl
         }
     }'''
-    variables = {'login': USER_NAME}
+    variables = {'login': username}
     request = simple_request(user_getter.__name__, query, variables)
-    return request.json()['data']['user']
+    user_data = request.json()['data']['user']
+    return {'id': user_data['id']}, user_data['createdAt'], user_data['avatarUrl']
 
-def follower_getter():
+def follower_getter(username):
     """
-    Returns the follower count of the user
+    Returns the number of followers of the user
     """
     query_count('follower_getter')
     query = '''
-    query ($login: String!) {
+    query($login: String!){
         user(login: $login) {
             followers {
                 totalCount
             }
         }
     }'''
-    variables = {'login': USER_NAME}
-    request = simple_request(follower_getter.__name__, query, variables)
-    return request.json()['data']['user']['followers']['totalCount']
+    request = simple_request(follower_getter.__name__, query, {'login': username})
+    return int(request.json()['data']['user']['followers']['totalCount'])
 
 
 def query_count(funct_id):
@@ -703,88 +621,92 @@ def update_svg_ascii_art(filename, ascii_lines):
     tree.write(filename, encoding='utf-8', xml_declaration=True, pretty_print=True)
 
 
-def check_env_vars():
-    """
-    Check for environment variables and exit if not found.
-    """
-    if 'ACCESS_TOKEN' not in os.environ or 'USER_NAME' not in os.environ:
-        print("❌ 错误：环境变量 ACCESS_TOKEN 或 USER_NAME 未设置。")
-        print("💡 请在运行前设置它们: export ACCESS_TOKEN='your_token' USER_NAME='your_username'")
-        sys.exit(1)
-
-def repo_counter(owner_affiliation):
-    """
-    Count repositories and contributions.
-    """
-    edges = repo_getter(owner_affiliation=['OWNER'])
-    contrib_edges = repo_getter(owner_affiliation=owner_affiliation)
-    return len(edges), len(contrib_edges)
-
-def star_getter(owner_affiliation):
-    """
-    Count total stars on user's repositories.
-    """
-    edges = repo_getter(owner_affiliation=owner_affiliation)
-    stars = 0
-    for edge in edges:
-        # Placeholder for actual star count logic if available in repo_getter response
-        # This part might need adjustment based on what repo_getter returns
-        if 'stargazerCount' in edge['node']:
-            stars += edge['node']['stargazerCount']
-    return stars
-
-def update_svg(filename, repo_data, contrib_data, star_data, commit_data, total_loc, loc_add, loc_del, follower_data):
-    """
-    Update the SVG file with the new data.
-    """
-    tree = etree.parse(filename)
-    # ... (rest of the update logic) ...
-    tree.write(filename, encoding='utf-8', xml_declaration=True, pretty_print=True)
-
 def main():
     """
-    Generate the README.md file.
+    main function
     """
-    check_env_vars()
+    global OWNER_ID
+    start_time = time.perf_counter()
     
-    print_progress(0, "🚀 开始更新GitHub个人主页...")
+    print("🚀 GitHub 个人资料更新器启动中...")
+    print("=" * 50)
+    
+    # Step 1: Get user data
+    print_progress("获取用户账户信息", 1, 8)
+    user_result, user_time = perf_counter(user_getter, USER_NAME)
+    OWNER_ID, acc_date, avatar_url = user_result
+    formatter('账户数据', user_time)
+    
+    # Step 2: Generate ASCII avatar
+    print_progress("生成 ASCII 头像艺术", 2, 8)
+    ascii_avatar, avatar_time = perf_counter(generate_ascii_avatar, avatar_url)
+    formatter('头像生成', avatar_time)
 
-    # 1. 获取用户信息
-    print_progress(1, "获取用户信息和头像...")
-    user_data = user_getter()
+    # Step 3: Calculate age
+    print_progress("计算账户年龄", 3, 8)
+    age_data, age_time = perf_counter(daily_readme, datetime.datetime.strptime(acc_date, "%Y-%m-%dT%H:%M:%SZ"))
+    formatter('年龄计算', age_time)
+    
+    # Step 4: Get lines of code
+    print_progress("统计代码行数（可能需要较长时间）", 4, 8)
+    total_loc, loc_time = perf_counter(loc_query, ['OWNER', 'COLLABORATOR', 'ORGANIZATION_MEMBER'], 7)
+    formatter('代码行数 (已缓存)' if total_loc[-1] else '代码行数 (无缓存)', loc_time)
+    
+    # Step 5: Get commit data
+    print_progress("统计提交次数", 5, 8)
+    commit_data, commit_time = perf_counter(commit_counter, total_loc[-1])
+    formatter('提交数据', commit_time)
+    
+    # Step 6: Get stars and repos
+    print_progress("获取仓库和 Star 数据", 6, 8)
+    star_data, star_time = perf_counter(graph_repos_stars, 'stars', ['OWNER', 'COLLABORATOR', 'ORGANIZATION_MEMBER'])
+    formatter('Star 数据', star_time)
+    repo_data, repo_time = perf_counter(graph_repos_stars, 'repos', ['OWNER'])
+    formatter('仓库数据', repo_time)
+    contrib_data, contrib_time = perf_counter(graph_repos_stars, 'repos', ['OWNER', 'COLLABORATOR', 'ORGANIZATION_MEMBER'])
+    
+    # Step 7: Get follower data
+    print_progress("获取粉丝数据", 7, 8)
+    follower_data, follower_time = perf_counter(follower_getter, USER_NAME)
 
-    # 2. 生成ASCII头像
-    print_progress(2, "生成ASCII艺术头像...")
-    if 'avatarUrl' in user_data and user_data['avatarUrl']:
-        ascii_art = generate_ascii_avatar(user_data['avatarUrl'])
-        if ascii_art:
-            update_svg_ascii_art('dark_mode.svg', ascii_art)
-            update_svg_ascii_art('light_mode.svg', ascii_art)
-    
-    # 3. 获取仓库、星标、贡献和关注者数量
-    print_progress(3, "获取仓库、星标和关注者数量...")
-    repo_data, contrib_data = repo_counter(['OWNER', 'COLLABORATOR'])
-    star_data, star_time = perf_counter(star_getter, ['OWNER'])
-    follower_data, follower_time = perf_counter(follower_getter)
-    
-    # 4. 获取总提交数
-    print_progress(4, "统计总提交数...")
-    commit_data, commit_time = perf_counter(commit_counter, True)
+    # Handle archived data for specific user
+    if OWNER_ID == {'id': 'MDQ6VXNlcjU3MzMxMTM0'}: # only calculate for user Andrew6rant
+        archived_data = add_archive()
+        if isinstance(archived_data, list) and len(archived_data) > 0:
+            for index in range(len(total_loc)-1):
+                total_loc[index] = (total_loc[index] or 0) + (archived_data[index] or 0)
+            contrib_data = (contrib_data or 0) + (archived_data[-1] or 0)
+            commit_data = (commit_data or 0) + int(archived_data[-2] or 0)
 
-    # 5. 统计总代码贡献量 (LOC)
-    loc_add, loc_del = loc_query(['OWNER'])
-    total_loc = loc_add - loc_del
-    
-    # 6. 更新SVG文件
-    print_progress(6, "🎨 更新SVG模板文件...")
-    update_svg('dark_mode.svg', repo_data, contrib_data, star_data, commit_data, total_loc, loc_add, loc_del, follower_data)
-    update_svg('light_mode.svg', repo_data, contrib_data, star_data, commit_data, total_loc, loc_add, loc_del, follower_data)
-    
-    # 7. 更新README.md
-    # (如果需要，可以在这里添加更新README的逻辑)
+    # Format numbers
+    for index in range(len(total_loc)-1): 
+        if total_loc[index] is not None:
+            total_loc[index] = '{:,}'.format(total_loc[index])
 
-    print_progress(8, "✅ 个人主页更新完成！")
+    # Step 8: Update SVG files
+    print_progress("更新 SVG 文件", 8, 8)
+    print("  📄 更新 dark_mode.svg...")
+    svg_overwrite('dark_mode.svg', age_data, commit_data, star_data, repo_data, contrib_data, follower_data, total_loc[:-1])
+    print("  📄 更新 light_mode.svg...")
+    svg_overwrite('light_mode.svg', age_data, commit_data, star_data, repo_data, contrib_data, follower_data, total_loc[:-1])
     
+    # Update ASCII avatars in both SVG files
+    print("  🎨 更新 ASCII 头像...")
+    update_svg_ascii_art('dark_mode.svg', ascii_avatar)
+    update_svg_ascii_art('light_mode.svg', ascii_avatar)
+
+    # Final summary
+    total_time = time.perf_counter() - start_time
+    print("\n" + "=" * 50)
+    print(f"✅ 更新完成！总耗时: {total_time:.3f}秒")
+    print(f"📊 GitHub API 调用次数: {sum(QUERY_COUNT.values())}")
+    
+    print("\n📈 API 调用详情:")
+    for funct_name, count in QUERY_COUNT.items(): 
+        print(f'   {funct_name}: {count}')
+    
+    print("\n🎉 SVG 文件已更新，现在可以在 GitHub 个人主页查看效果！")
+
 
 if __name__ == '__main__':
     if not PIL_AVAILABLE:
