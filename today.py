@@ -229,6 +229,7 @@ def update_svg_ascii_art(svg_path, avatar_url):
     for i, line in enumerate(ascii_art.split('\n')):
         tspan = etree.SubElement(text_element, "tspan", x="0", dy="1em")
         tspan.text = line
+        tspan.tail = "\n"  # Ensure each tspan is on a new line for readability
     art_container.append(text_element)
     
     tree.write(svg_path, pretty_print=True, xml_declaration=True, encoding='UTF-8')
