@@ -6,7 +6,7 @@ from lxml import etree  # type: ignore
 import time
 import hashlib
 import io
-from typing import List
+import sys
 
 try:
     from PIL import Image
@@ -14,16 +14,54 @@ try:
 except ImportError:
     PIL_AVAILABLE = False
 
+try:
+    from tqdm import tqdm
+    TQDM_AVAILABLE = True
+except ImportError:
+    TQDM_AVAILABLE = False
+
 OWNER_ID = {}
+
+# Check for required environment variables
+try:
+    ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
+    USER_NAME = os.environ['USER_NAME']
+except KeyError as e:
+    print(f"❌ 错误：缺少环境变量 {e}")
+    print("📝 请使用以下命令运行脚本：")
+    print("ACCESS_TOKEN=your_github_token USER_NAME=your_username python3 today.py")
+    print("\n🔑 如何获取 GitHub Personal Access Token：")
+    print("1. 访问 https://github.com/settings/tokens")
+    print("2. 点击 'Generate new token (classic)'")
+    print("3. 设置权限：repo, read:user, read:org")
+    print("4. 复制生成的 token")
+    sys.exit(1)
 
 # Fine-grained personal access token with All Repositories access:
 # Account permissions: read:Followers, read:Starring, read:Watching
 # Repository permissions: read:Commit statuses, read:Contents, read:Issues, read:Metadata, read:Pull Requests
 # Issues and pull requests permissions not needed at the moment, but may be used in the future
-HEADERS = {'authorization': 'token '+ os.environ['ACCESS_TOKEN']}
-USER_NAME = os.environ['USER_NAME'] # 'Andrew6rant'
+HEADERS = {'authorization': 'token '+ ACCESS_TOKEN}
 QUERY_COUNT = {'user_getter': 0, 'follower_getter': 0, 'graph_repos_stars': 0, 'recursive_loc': 0, 'graph_commits': 0, 'loc_query': 0}
 
+def progress_bar(iterable, desc="处理中", disable=False):
+    """
+    创建进度条，如果 tqdm 不可用则返回原始可迭代对象
+    """
+    if TQDM_AVAILABLE and not disable:
+        return tqdm(iterable, desc=desc, ncols=80)
+    else:
+        return iterable
+
+def print_progress(message, step=None, total=None):
+    """
+    打印进度信息
+    """
+    if step is not None and total is not None:
+        progress = f"[{step}/{total}] "
+    else:
+        progress = ""
+    print(f"🔄 {progress}{message}")
 
 def daily_readme(birthday):
     """
@@ -170,7 +208,10 @@ def loc_counter_one_repo(owner, repo_name, data, cache_comment, history, additio
     Recursively call recursive_loc (since GraphQL can only search 100 commits at a time) 
     only adds the LOC value of commits authored by me
     """
-    for node in history['edges']:
+    commits = history['edges']
+    
+    # 使用进度条显示commits处理进度
+    for node in progress_bar(commits, desc=f"处理 {repo_name} 的提交", disable=len(commits) < 10):
         if node['node']['author']['user'] == OWNER_ID:
             my_commits += 1
             addition_total += node['node']['additions']
@@ -178,7 +219,8 @@ def loc_counter_one_repo(owner, repo_name, data, cache_comment, history, additio
 
     if history['edges'] == [] or not history['pageInfo']['hasNextPage']:
         return addition_total, deletion_total, my_commits
-    else: return recursive_loc(owner, repo_name, data, cache_comment, addition_total, deletion_total, my_commits, history['pageInfo']['endCursor'])
+    else: 
+        return recursive_loc(owner, repo_name, data, cache_comment, addition_total, deletion_total, my_commits, history['pageInfo']['endCursor'])
 
 
 def loc_query(owner_affiliation, comment_size=0, force_cache=False, cursor=None, edges=[]):
@@ -286,7 +328,7 @@ def flush_cache(edges, filename, comment_size):
             f.write(hashlib.sha256(node['node']['nameWithOwner'].encode('utf-8')).hexdigest() + ' 0 0 0 0\n')
 
 
-def add_archive() -> List[int]:
+def add_archive():
     """
     Several repositories I have contributed to have since been deleted.
     This function adds them using their last known data
@@ -526,58 +568,85 @@ def main():
     """
     global OWNER_ID
     start_time = time.perf_counter()
-    print('Calculation times:')
-    # define global variable for owner ID and calculate user's creation date
-    # e.g {'id': 'MDQ6VXNlcjU3MzMxMTM0'} and 2019-11-03T21:15:07Z for username 'Andrew6rant'
+    
+    print("🚀 GitHub 个人资料更新器启动中...")
+    print("=" * 50)
+    
+    # Step 1: Get user data
+    print_progress("获取用户账户信息", 1, 8)
     user_result, user_time = perf_counter(user_getter, USER_NAME)
     OWNER_ID, acc_date, avatar_url = user_result
-    formatter('account data', user_time)
+    formatter('账户数据', user_time)
     
-    # Generate ASCII avatar
+    # Step 2: Generate ASCII avatar
+    print_progress("生成 ASCII 头像艺术", 2, 8)
     ascii_avatar, avatar_time = perf_counter(generate_ascii_avatar, avatar_url)
-    formatter('avatar generation', avatar_time)
+    formatter('头像生成', avatar_time)
 
+    # Step 3: Calculate age
+    print_progress("计算账户年龄", 3, 8)
     age_data, age_time = perf_counter(daily_readme, datetime.datetime.strptime(acc_date, "%Y-%m-%dT%H:%M:%SZ"))
-    formatter('age calculation', age_time)
+    formatter('年龄计算', age_time)
+    
+    # Step 4: Get lines of code
+    print_progress("统计代码行数（可能需要较长时间）", 4, 8)
     total_loc, loc_time = perf_counter(loc_query, ['OWNER', 'COLLABORATOR', 'ORGANIZATION_MEMBER'], 7)
-    formatter('LOC (cached)', loc_time) if total_loc[-1] else formatter('LOC (no cache)', loc_time)
+    formatter('代码行数 (已缓存)' if total_loc[-1] else '代码行数 (无缓存)', loc_time)
+    
+    # Step 5: Get commit data
+    print_progress("统计提交次数", 5, 8)
     commit_data, commit_time = perf_counter(commit_counter, total_loc[-1])
-    formatter('commit data', commit_time)
+    formatter('提交数据', commit_time)
+    
+    # Step 6: Get stars and repos
+    print_progress("获取仓库和 Star 数据", 6, 8)
     star_data, star_time = perf_counter(graph_repos_stars, 'stars', ['OWNER', 'COLLABORATOR', 'ORGANIZATION_MEMBER'])
-    formatter('star data', star_time)
+    formatter('Star 数据', star_time)
     repo_data, repo_time = perf_counter(graph_repos_stars, 'repos', ['OWNER'])
-    formatter('repo data', repo_time)
+    formatter('仓库数据', repo_time)
     contrib_data, contrib_time = perf_counter(graph_repos_stars, 'repos', ['OWNER', 'COLLABORATOR', 'ORGANIZATION_MEMBER'])
+    
+    # Step 7: Get follower data
+    print_progress("获取粉丝数据", 7, 8)
     follower_data, follower_time = perf_counter(follower_getter, USER_NAME)
 
-    # several repositories that I've contributed to have since been deleted.
+    # Handle archived data for specific user
     if OWNER_ID == {'id': 'MDQ6VXNlcjU3MzMxMTM0'}: # only calculate for user Andrew6rant
         archived_data = add_archive()
-        # Now we know archived_data is definitely a List[int] with 5 elements
-        for index in range(len(total_loc)-1):
-            total_loc[index] = (total_loc[index] or 0) + archived_data[index]
-        contrib_data = (contrib_data or 0) + archived_data[4]  # contributed_repos
-        commit_data = (commit_data or 0) + archived_data[3]    # added_commits
+        if isinstance(archived_data, list) and len(archived_data) > 0:
+            for index in range(len(total_loc)-1):
+                total_loc[index] = (total_loc[index] or 0) + (archived_data[index] or 0)
+            contrib_data = (contrib_data or 0) + (archived_data[-1] or 0)
+            commit_data = (commit_data or 0) + int(archived_data[-2] or 0)
 
+    # Format numbers
     for index in range(len(total_loc)-1): 
         if total_loc[index] is not None:
-            total_loc[index] = '{:,}'.format(total_loc[index]) # format added, deleted, and total LOC
+            total_loc[index] = '{:,}'.format(total_loc[index])
 
-    # First update the data
+    # Step 8: Update SVG files
+    print_progress("更新 SVG 文件", 8, 8)
+    print("  📄 更新 dark_mode.svg...")
     svg_overwrite('dark_mode.svg', age_data, commit_data, star_data, repo_data, contrib_data, follower_data, total_loc[:-1])
+    print("  📄 更新 light_mode.svg...")
     svg_overwrite('light_mode.svg', age_data, commit_data, star_data, repo_data, contrib_data, follower_data, total_loc[:-1])
     
-    # Then update ASCII avatars in both SVG files (AFTER svg_overwrite)
+    # Update ASCII avatars in both SVG files
+    print("  🎨 更新 ASCII 头像...")
     update_svg_ascii_art('dark_mode.svg', ascii_avatar)
     update_svg_ascii_art('light_mode.svg', ascii_avatar)
 
-    # move cursor to override 'Calculation times:' with 'Total function time:' and the total function time, then move cursor back
-    print('\033[F\033[F\033[F\033[F\033[F\033[F\033[F\033[F\033[F',
-          f'Total function time: {time.perf_counter() - start_time:.3f}s',
-          '\033[E\033[E\033[E\033[E\033[E\033[E\033[E\033[E\033[E')
-
-    print('Total GitHub GraphQL API calls:', '{:>3}'.format(sum(QUERY_COUNT.values())))
-    for funct_name, count in QUERY_COUNT.items(): print('{:<28}'.format('   ' + funct_name + ':'), '{:>6}'.format(count))
+    # Final summary
+    total_time = time.perf_counter() - start_time
+    print("\n" + "=" * 50)
+    print(f"✅ 更新完成！总耗时: {total_time:.3f}秒")
+    print(f"📊 GitHub API 调用次数: {sum(QUERY_COUNT.values())}")
+    
+    print("\n📈 API 调用详情:")
+    for funct_name, count in QUERY_COUNT.items(): 
+        print(f'   {funct_name}: {count}')
+    
+    print("\n🎉 SVG 文件已更新，现在可以在 GitHub 个人主页查看效果！")
 
 
 if __name__ == '__main__':
