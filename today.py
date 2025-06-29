@@ -769,7 +769,7 @@ def main():
     
     # 4. 获取总提交数
     print_progress(4, "统计总提交数...")
-    commit_data, commit_time = perf_counter(commit_counter, 100, True)
+    commit_data, commit_time = perf_counter(commit_counter, True)
 
     # 5. 统计总代码贡献量 (LOC)
     loc_add, loc_del = loc_query(['OWNER'])
