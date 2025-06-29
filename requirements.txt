@@ -1,5 +1,5 @@
-python-dateutil
 requests
-lxml
+python-dotenv
+tqdm
 Pillow
-tqdm 
+lxml 
