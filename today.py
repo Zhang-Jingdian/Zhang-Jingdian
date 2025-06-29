@@ -236,8 +236,8 @@ def loc_query(owner_affiliation, comment_size=0, force_cache=False, cursor=None,
     query ($owner_affiliation: [RepositoryAffiliation], $login: String!, $cursor: String) {
         user(login: $login) {
             repositories(first: 60, after: $cursor, ownerAffiliations: $owner_affiliation) {
-            edges {
-                node {
+                edges {
+                    node {
                     ... on Repository {
                         nameWithOwner
                         defaultBranchRef {
@@ -245,11 +245,11 @@ def loc_query(owner_affiliation, comment_size=0, force_cache=False, cursor=None,
                                 ... on Commit {
                                     history {
                                         totalCount
-                                        }
                                     }
                                 }
                             }
                         }
+                    }
                     }
                 }
                 pageInfo {
@@ -260,6 +260,7 @@ def loc_query(owner_affiliation, comment_size=0, force_cache=False, cursor=None,
         }
     }'''
     variables = {'owner_affiliation': owner_affiliation, 'login': USER_NAME, 'cursor': cursor}
+    print('处理提交...') # 用通用提示替换硬编码
     request = simple_request(loc_query.__name__, query, variables)
     if request.json()['data']['user']['repositories']['pageInfo']['hasNextPage']:   # If repository data has another page
         edges += request.json()['data']['user']['repositories']['edges']            # Add on to the LoC count
