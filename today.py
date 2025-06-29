@@ -576,7 +576,7 @@ def update_svg_ascii_art(filename, ascii_lines):
     if ascii_text is not None:
         # Clear existing content - remove all children and text
         ascii_text.clear()
-        ascii_text.text = None
+        ascii_text.text = "\n"  # 开始换行
         ascii_text.tail = None
         
         # Set the basic attributes
@@ -590,12 +590,17 @@ def update_svg_ascii_art(filename, ascii_lines):
         else:
             ascii_text.set('fill', '#24292f')
 
-        # Add new ASCII art lines
+        # Add new ASCII art lines with proper formatting
         for i, line in enumerate(ascii_lines):
             tspan = etree.SubElement(ascii_text, 'tspan')
             tspan.set('x', '15')
             tspan.set('y', str(30 + i * 20))
             tspan.text = line.ljust(35)  # Pad to consistent width
+            tspan.tail = "\n"  # 每个tspan后面都换行
+            
+        # 确保最后一个元素后面也有换行
+        if len(ascii_lines) > 0:
+            ascii_text[-1].tail = "\n"
     else:
         print(f"⚠️  未找到 ASCII 艺术元素（class='ascii'）在文件 {filename} 中")
     

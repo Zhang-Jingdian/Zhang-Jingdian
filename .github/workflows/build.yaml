@@ -10,15 +10,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1
-      - name: Get Python 3.8
-        uses: actions/setup-python@v2
+      - name: Setup Python
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.8'
+          python-version: '3.9'
       - name: Configure pip cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
@@ -30,11 +30,11 @@ jobs:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           USER_NAME: ${{ secrets.USER_NAME }}
         run: python today.py
-      - name: Commit
+      - name: Commit and push changes
         run: |-
           git add .
           git diff
-          git config --global user.email "github-actions-bot@andrew6rant.github.io"
-          git config --global user.name "Andrew6rant/GitHub-Actions-Bot"
-          git commit -m "Updated README" -a || echo "No changes to commit"
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+          git commit -m "🤖 自动更新个人资料数据" -a || echo "No changes to commit"
           git push
