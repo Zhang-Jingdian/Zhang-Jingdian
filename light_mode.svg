@@ -24,8 +24,8 @@
   <rect width="100%" height="100%" rx="10" class="bg"/>
 
   <!-- ASCII Art Left Column -->
-  <g id="ascii-art" transform="translate(30, 40)">
-      <tspan x="0" dy="1.2em">@@@@@@@@@%####%%@@@@@@@@@</tspan>
+  <g id="ascii-art" transform="translate(30, 20)">
+<tspan x="0" dy="1.2em">@@@@@@@@@%####%%@@@@@@@@@</tspan>
 <tspan x="0" dy="1.2em">@@@@@#+=---------=*%@@@@@</tspan>
 <tspan x="0" dy="1.2em">@@@#+-----:::::-----+%@@@</tspan>
 <tspan x="0" dy="1.2em">@@%+++=+++*+=+*+++=++*%%@</tspan>
