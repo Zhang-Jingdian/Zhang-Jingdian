@@ -416,13 +416,39 @@ def commit_counter(comment_size):
     Counts up my total commits, using the cache file created by cache_builder.
     """
     total_commits = 0
-    filename = 'cache/'+hashlib.sha256(USER_NAME.encode('utf-8')).hexdigest()+'.txt' # Use the same filename as cache_builder
-    with open(filename, 'r') as f:
-        data = f.readlines()
-    cache_comment = data[:comment_size] # save the comment block
-    data = data[comment_size:] # remove those lines
-    for line in data:
-        total_commits += int(line.split()[2])
+    filename = 'cache/'+hashlib.sha256(USER_NAME.encode('utf-8')).hexdigest()+'.txt'
+    
+    try:
+        with open(filename, 'r') as f:
+            data = f.readlines()
+        
+        cache_comment = data[:comment_size] # save the comment block
+        data = data[comment_size:] # remove those lines
+        
+        for line_num, line in enumerate(data, start=comment_size + 1):
+            line = line.strip()
+            if not line:  # 跳过空行
+                continue
+                
+            parts = line.split()
+            if len(parts) < 3:  # 确保有足够的部分
+                print(f"⚠️  跳过格式不正确的行 {line_num}: {line}")
+                continue
+                
+            try:
+                commit_count = int(parts[2])  # 尝试转换第3个字段为整数
+                total_commits += commit_count
+            except ValueError as e:
+                print(f"⚠️  跳过无法解析的行 {line_num}: {line} (错误: {e})")
+                continue
+                
+    except FileNotFoundError:
+        print(f"⚠️  缓存文件不存在: {filename}")
+        return 0
+    except Exception as e:
+        print(f"❌ 读取缓存文件时出错: {e}")
+        return 0
+        
     return total_commits
 
 
