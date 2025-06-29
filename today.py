@@ -564,21 +564,22 @@ def user_getter():
     request = simple_request(user_getter.__name__, query, variables)
     return request.json()['data']['user']
 
-def follower_getter(username):
+def follower_getter():
     """
-    Returns the number of followers of the user
+    Returns the follower count of the user
     """
     query_count('follower_getter')
     query = '''
-    query($login: String!){
+    query ($login: String!) {
         user(login: $login) {
             followers {
                 totalCount
             }
         }
     }'''
-    request = simple_request(follower_getter.__name__, query, {'login': username})
-    return int(request.json()['data']['user']['followers']['totalCount'])
+    variables = {'login': USER_NAME}
+    request = simple_request(follower_getter.__name__, query, variables)
+    return request.json()['data']['user']['followers']['totalCount']
 
 
 def query_count(funct_id):
