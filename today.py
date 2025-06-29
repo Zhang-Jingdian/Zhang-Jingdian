@@ -2,9 +2,19 @@ import datetime
 from dateutil import relativedelta
 import requests
 import os
-from lxml import etree
+from lxml import etree  # type: ignore
 import time
 import hashlib
+import io
+from typing import List
+
+try:
+    from PIL import Image
+    PIL_AVAILABLE = True
+except ImportError:
+    PIL_AVAILABLE = False
+
+OWNER_ID = {}
 
 # Fine-grained personal access token with All Repositories access:
 # Account permissions: read:Followers, read:Starring, read:Watching
@@ -276,7 +286,7 @@ def flush_cache(edges, filename, comment_size):
             f.write(hashlib.sha256(node['node']['nameWithOwner'].encode('utf-8')).hexdigest() + ' 0 0 0 0\n')
 
 
-def add_archive():
+def add_archive() -> List[int]:
     """
     Several repositories I have contributed to have since been deleted.
     This function adds them using their last known data
@@ -376,19 +386,21 @@ def commit_counter(comment_size):
 
 def user_getter(username):
     """
-    Returns the account ID and creation time of the user
+    Returns the account ID, creation time, and avatar URL of the user
     """
     query_count('user_getter')
     query = '''
-    query($login: String!){
+    query ($login: String!) {
         user(login: $login) {
             id
             createdAt
+            avatarUrl
         }
     }'''
     variables = {'login': username}
     request = simple_request(user_getter.__name__, query, variables)
-    return {'id': request.json()['data']['user']['id']}, request.json()['data']['user']['createdAt']
+    user_data = request.json()['data']['user']
+    return {'id': user_data['id']}, user_data['createdAt'], user_data['avatarUrl']
 
 def follower_getter(username):
     """
@@ -437,43 +449,139 @@ def formatter(query_type, difference, funct_return=False, whitespace=0):
     return funct_return
 
 
-if __name__ == '__main__':
+def generate_ascii_avatar(avatar_url, width=35, height=25):
     """
-    Andrew Grant (Andrew6rant), 2022-2025
+    Download user avatar and convert to ASCII art
     """
+    if not PIL_AVAILABLE:
+        print("Warning: Pillow not available, using fallback ASCII pattern.")
+        # Create a simple pattern as fallback
+        return ["@" * width for _ in range(height)]
+    
+    try:
+        # Download avatar image
+        response = requests.get(avatar_url)
+        response.raise_for_status()
+        
+        # Open image with Pillow
+        image = Image.open(io.BytesIO(response.content))
+        
+        # Resize image
+        image = image.resize((width, height))
+        
+        # Convert to grayscale
+        image = image.convert('L')
+        
+        # ASCII characters from darkest to lightest
+        ascii_chars = "@%#*+=-:. "
+        
+        # Convert pixels to ASCII
+        ascii_lines = []
+        pixels = list(image.getdata())
+        
+        for i in range(0, len(pixels), width):
+            line = ""
+            for j in range(width):
+                if i + j < len(pixels):
+                    pixel = pixels[i + j]
+                    ascii_char = ascii_chars[min(pixel // 28, len(ascii_chars) - 1)]
+                    line += ascii_char
+            ascii_lines.append(line)
+            
+        return ascii_lines
+        
+    except Exception as e:
+        print(f"Error generating ASCII avatar: {e}")
+        # Fallback to simple pattern
+        return ["@" * width for _ in range(height)]
+
+
+def update_svg_ascii_art(filename, ascii_lines):
+    """
+    Update the ASCII art section in SVG file
+    """
+    tree = etree.parse(filename)
+    root = tree.getroot()
+    
+    # Find the ASCII art text element
+    ascii_text = root.find(".//*[@class='ascii']")
+    if ascii_text is not None:
+        # Clear existing tspan elements
+        for tspan in ascii_text.findall('{*}tspan'):
+            ascii_text.remove(tspan)
+
+        # Add new ASCII art
+        for i, line in enumerate(ascii_lines):
+            tspan = etree.SubElement(ascii_text, 'tspan')
+            tspan.set('x', '15')
+            tspan.set('y', str(30 + i * 20))
+            tspan.text = line.ljust(35)  # Pad to consistent width
+    
+    tree.write(filename, encoding='utf-8', xml_declaration=True)
+
+
+def main():
+    """
+    main function
+    """
+    global OWNER_ID
+    start_time = time.perf_counter()
     print('Calculation times:')
     # define global variable for owner ID and calculate user's creation date
     # e.g {'id': 'MDQ6VXNlcjU3MzMxMTM0'} and 2019-11-03T21:15:07Z for username 'Andrew6rant'
-    user_data, user_time = perf_counter(user_getter, USER_NAME)
-    OWNER_ID, acc_date = user_data
+    user_result, user_time = perf_counter(user_getter, USER_NAME)
+    OWNER_ID, acc_date, avatar_url = user_result
     formatter('account data', user_time)
-    age_data, age_time = perf_counter(daily_readme, datetime.datetime(2002, 7, 5))
+    
+    # Generate ASCII avatar
+    ascii_avatar, avatar_time = perf_counter(generate_ascii_avatar, avatar_url)
+    formatter('avatar generation', avatar_time)
+
+    age_data, age_time = perf_counter(daily_readme, datetime.datetime.strptime(acc_date, "%Y-%m-%dT%H:%M:%SZ"))
     formatter('age calculation', age_time)
     total_loc, loc_time = perf_counter(loc_query, ['OWNER', 'COLLABORATOR', 'ORGANIZATION_MEMBER'], 7)
     formatter('LOC (cached)', loc_time) if total_loc[-1] else formatter('LOC (no cache)', loc_time)
-    commit_data, commit_time = perf_counter(commit_counter, 7)
-    star_data, star_time = perf_counter(graph_repos_stars, 'stars', ['OWNER'])
+    commit_data, commit_time = perf_counter(commit_counter, total_loc[-1])
+    formatter('commit data', commit_time)
+    star_data, star_time = perf_counter(graph_repos_stars, 'stars', ['OWNER', 'COLLABORATOR', 'ORGANIZATION_MEMBER'])
+    formatter('star data', star_time)
     repo_data, repo_time = perf_counter(graph_repos_stars, 'repos', ['OWNER'])
+    formatter('repo data', repo_time)
     contrib_data, contrib_time = perf_counter(graph_repos_stars, 'repos', ['OWNER', 'COLLABORATOR', 'ORGANIZATION_MEMBER'])
     follower_data, follower_time = perf_counter(follower_getter, USER_NAME)
 
     # several repositories that I've contributed to have since been deleted.
     if OWNER_ID == {'id': 'MDQ6VXNlcjU3MzMxMTM0'}: # only calculate for user Andrew6rant
         archived_data = add_archive()
+        # Now we know archived_data is definitely a List[int] with 5 elements
         for index in range(len(total_loc)-1):
-            total_loc[index] += archived_data[index]
-        contrib_data += archived_data[-1]
-        commit_data += int(archived_data[-2])
+            total_loc[index] = (total_loc[index] or 0) + archived_data[index]
+        contrib_data = (contrib_data or 0) + archived_data[4]  # contributed_repos
+        commit_data = (commit_data or 0) + archived_data[3]    # added_commits
 
-    for index in range(len(total_loc)-1): total_loc[index] = '{:,}'.format(total_loc[index]) # format added, deleted, and total LOC
+    for index in range(len(total_loc)-1): 
+        if total_loc[index] is not None:
+            total_loc[index] = '{:,}'.format(total_loc[index]) # format added, deleted, and total LOC
 
+    # First update the data
     svg_overwrite('dark_mode.svg', age_data, commit_data, star_data, repo_data, contrib_data, follower_data, total_loc[:-1])
     svg_overwrite('light_mode.svg', age_data, commit_data, star_data, repo_data, contrib_data, follower_data, total_loc[:-1])
+    
+    # Then update ASCII avatars in both SVG files (AFTER svg_overwrite)
+    update_svg_ascii_art('dark_mode.svg', ascii_avatar)
+    update_svg_ascii_art('light_mode.svg', ascii_avatar)
 
     # move cursor to override 'Calculation times:' with 'Total function time:' and the total function time, then move cursor back
-    print('\033[F\033[F\033[F\033[F\033[F\033[F\033[F\033[F',
-        '{:<21}'.format('Total function time:'), '{:>11}'.format('%.4f' % (user_time + age_time + loc_time + commit_time + star_time + repo_time + contrib_time)),
-        ' s \033[E\033[E\033[E\033[E\033[E\033[E\033[E\033[E', sep='')
+    print('\033[F\033[F\033[F\033[F\033[F\033[F\033[F\033[F\033[F',
+          f'Total function time: {time.perf_counter() - start_time:.3f}s',
+          '\033[E\033[E\033[E\033[E\033[E\033[E\033[E\033[E\033[E')
 
     print('Total GitHub GraphQL API calls:', '{:>3}'.format(sum(QUERY_COUNT.values())))
     for funct_name, count in QUERY_COUNT.items(): print('{:<28}'.format('   ' + funct_name + ':'), '{:>6}'.format(count))
+
+
+if __name__ == '__main__':
+    if not PIL_AVAILABLE:
+        print("Error: Pillow not installed. Please run: pip install Pillow")
+    else:
+        main()
