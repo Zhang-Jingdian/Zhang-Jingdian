@@ -1,0 +1,31 @@
+[tool.pyright]
+include = ["today.py"]
+exclude = ["cache/**", ".git/**"]
+
+# Type checking settings
+typeCheckingMode = "basic"
+reportMissingImports = false
+reportMissingModuleSource = false
+reportOptionalMemberAccess = false
+
+# Python version
+pythonVersion = "3.8"
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "github-profile-generator"
+version = "1.0.0"
+description = "Automated GitHub Profile README generator with ASCII avatar"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "python-dateutil",
+    "requests", 
+    "Pillow"
+]
+
+[project.urls]
+Repository = "https://github.com/Zhang-Jingdian/Zhang-Jingdian" 

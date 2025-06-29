@@ -1,6 +1,4 @@
 import datetime
-from dateutil import relativedelta
-import requests
 import os
 import xml.etree.ElementTree as etree
 import time
@@ -8,7 +6,19 @@ import hashlib
 import io
 
 try:
-    from PIL import Image
+    from dateutil import relativedelta  # type: ignore
+except ImportError:
+    print("Error: python-dateutil not installed. Please run: pip install python-dateutil")
+    exit(1)
+
+try:
+    import requests  # type: ignore
+except ImportError:
+    print("Error: requests not installed. Please run: pip install requests")
+    exit(1)
+
+try:
+    from PIL import Image  # type: ignore
     PIL_AVAILABLE = True
 except ImportError:
     PIL_AVAILABLE = False
