@@ -1,28 +1,10 @@
 import datetime
+from dateutil import relativedelta
+import requests
 import os
-import xml.etree.ElementTree as etree
+from lxml import etree
 import time
 import hashlib
-import io
-
-try:
-    from dateutil import relativedelta  # type: ignore
-except ImportError:
-    print("Error: python-dateutil not installed. Please run: pip install python-dateutil")
-    exit(1)
-
-try:
-    import requests  # type: ignore
-except ImportError:
-    print("Error: requests not installed. Please run: pip install requests")
-    exit(1)
-
-try:
-    from PIL import Image  # type: ignore
-    PIL_AVAILABLE = True
-except ImportError:
-    PIL_AVAILABLE = False
-    print("Warning: Pillow not available. ASCII avatar generation will be disabled.")
 
 # Fine-grained personal access token with All Repositories access:
 # Account permissions: read:Followers, read:Starring, read:Watching
@@ -266,10 +248,7 @@ def cache_builder(edges, comment_size, force_cache, loc_add=0, loc_del=0):
                     # if commit count has changed, update loc for that repo
                     owner, repo_name = edges[index]['node']['nameWithOwner'].split('/')
                     loc = recursive_loc(owner, repo_name, data, cache_comment)
-                    if loc == 0:
-                        data[index] = repo_hash + ' ' + str(edges[index]['node']['defaultBranchRef']['target']['history']['totalCount']) + ' 0 0 0\n'
-                    else:
-                        data[index] = repo_hash + ' ' + str(edges[index]['node']['defaultBranchRef']['target']['history']['totalCount']) + ' ' + str(loc[2]) + ' ' + str(loc[0]) + ' ' + str(loc[1]) + '\n'
+                    data[index] = repo_hash + ' ' + str(edges[index]['node']['defaultBranchRef']['target']['history']['totalCount']) + ' ' + str(loc[2]) + ' ' + str(loc[0]) + ' ' + str(loc[1]) + '\n'
             except TypeError: # If the repo is empty
                 data[index] = repo_hash + ' 0 0 0 0\n'
     with open(filename, 'w') as f:
@@ -380,110 +359,6 @@ def find_and_replace(root, element_id, new_text):
         element.text = new_text
 
 
-def generate_ascii_avatar(avatar_url, width=35, height=25):
-    """
-    Download user avatar and convert to ASCII art
-    """
-    if not PIL_AVAILABLE:
-        print("PIL not available, using fallback ASCII pattern")
-        # Create a simple pattern as fallback
-        pattern = [
-            "    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@",
-            "  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@",
-            " @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@",
-            "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@",
-            "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@",
-            "@@@@@@@@@@@@@@   @@@@@@@@@@@@@@@@@@@@@",
-            "@@@@@@@@@@@@@     @@@@@@@@@@@@@@@@@@@@",
-            "@@@@@@@@@@@@   @   @@@@@@@@@@@@@@@@@@@",
-            "@@@@@@@@@@@   @@@   @@@@@@@@@@@@@@@@@@",
-            "@@@@@@@@@@   @@@@@   @@@@@@@@@@@@@@@@@",
-            "@@@@@@@@@   @@@@@@@   @@@@@@@@@@@@@@@@",
-            "@@@@@@@@   @@@@@@@@@   @@@@@@@@@@@@@@@",
-            "@@@@@@@   @@@@@@@@@@@   @@@@@@@@@@@@@@",
-            "@@@@@@   @@@@@@@@@@@@@   @@@@@@@@@@@@@",
-            "@@@@@   @@@@@@@@@@@@@@@   @@@@@@@@@@@@",
-            "@@@@   @@@@@@@@@@@@@@@@@   @@@@@@@@@@@",
-            "@@@   @@@@@@@@@@@@@@@@@@@   @@@@@@@@@@",
-            "@@   @@@@@@@@@@@@@@@@@@@@@   @@@@@@@@@",
-            "@   @@@@@@@@@@@@@@@@@@@@@@@   @@@@@@@@",
-            "  @@@@@@@@@@@@@@@@@@@@@@@@@@@  @@@@@@@",
-            " @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @@@@@@",
-            "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @@@@@",
-            "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @@@",
-            "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @@",
-            "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @"
-        ]
-        return pattern[:height]
-    
-    try:
-        # Download avatar image
-        response = requests.get(avatar_url)
-        response.raise_for_status()
-        
-        # Open image with Pillow
-        image = Image.open(io.BytesIO(response.content))
-        
-        # Resize image
-        image = image.resize((width, height))
-        
-        # Convert to grayscale
-        image = image.convert('L')
-        
-        # ASCII characters from darkest to lightest
-        ascii_chars = "@%#*+=-:. "
-        
-        # Convert pixels to ASCII
-        ascii_lines = []
-        pixels = list(image.getdata())
-        
-        for i in range(0, len(pixels), width):
-            line = ""
-            for j in range(width):
-                if i + j < len(pixels):
-                    pixel = pixels[i + j]
-                    ascii_char = ascii_chars[min(pixel // 28, len(ascii_chars) - 1)]
-                    line += ascii_char
-            ascii_lines.append(line)
-            
-        return ascii_lines
-        
-    except Exception as e:
-        print(f"Error generating ASCII avatar: {e}")
-        # Fallback to simple pattern
-        return ["@" * width for _ in range(height)]
-
-
-def update_svg_ascii_art(filename, ascii_lines):
-    """
-    Update the ASCII art section in SVG file
-    """
-    tree = etree.parse(filename)
-    root = tree.getroot()
-    
-    # Find the ASCII art text element
-    ascii_text = root.find(".//*[@class='ascii']")
-    if ascii_text is not None:
-        # Clear existing tspan elements
-        ascii_text.clear()
-        ascii_text.set('x', '15')
-        ascii_text.set('y', '30')
-        if filename == 'dark_mode.svg':
-            ascii_text.set('fill', '#c9d1d9')
-        else:
-            ascii_text.set('fill', '#24292f')
-        ascii_text.set('class', 'ascii')
-        
-        # Add new ASCII art
-        for i, line in enumerate(ascii_lines):
-            tspan = etree.SubElement(ascii_text, 'tspan')
-            tspan.set('x', '15')
-            tspan.set('y', str(30 + i * 20))
-            tspan.text = line.ljust(35)  # Pad to consistent width
-    
-    tree.write(filename, encoding='utf-8', xml_declaration=True)
-
-
 def commit_counter(comment_size):
     """
     Counts up my total commits, using the cache file created by cache_builder.
@@ -501,7 +376,7 @@ def commit_counter(comment_size):
 
 def user_getter(username):
     """
-    Returns the account ID, creation time, and avatar URL of the user
+    Returns the account ID and creation time of the user
     """
     query_count('user_getter')
     query = '''
@@ -509,13 +384,11 @@ def user_getter(username):
         user(login: $login) {
             id
             createdAt
-            avatarUrl
         }
     }'''
     variables = {'login': username}
     request = simple_request(user_getter.__name__, query, variables)
-    user_data = request.json()['data']['user']
-    return {'id': user_data['id']}, user_data['createdAt'], user_data['avatarUrl']
+    return {'id': request.json()['data']['user']['id']}, request.json()['data']['user']['createdAt']
 
 def follower_getter(username):
     """
@@ -571,14 +444,10 @@ if __name__ == '__main__':
     print('Calculation times:')
     # define global variable for owner ID and calculate user's creation date
     # e.g {'id': 'MDQ6VXNlcjU3MzMxMTM0'} and 2019-11-03T21:15:07Z for username 'Andrew6rant'
-    user_result, user_time = perf_counter(user_getter, USER_NAME)
-    OWNER_ID, acc_date, avatar_url = user_result
+    user_data, user_time = perf_counter(user_getter, USER_NAME)
+    OWNER_ID, acc_date = user_data
     formatter('account data', user_time)
-    
-    # Generate ASCII avatar
-    print('Generating ASCII avatar...')
-    ascii_avatar = generate_ascii_avatar(avatar_url)
-    age_data, age_time = perf_counter(daily_readme, datetime.datetime(2024, 8, 28))
+    age_data, age_time = perf_counter(daily_readme, datetime.datetime(2002, 7, 5))
     formatter('age calculation', age_time)
     total_loc, loc_time = perf_counter(loc_query, ['OWNER', 'COLLABORATOR', 'ORGANIZATION_MEMBER'], 7)
     formatter('LOC (cached)', loc_time) if total_loc[-1] else formatter('LOC (no cache)', loc_time)
@@ -588,18 +457,18 @@ if __name__ == '__main__':
     contrib_data, contrib_time = perf_counter(graph_repos_stars, 'repos', ['OWNER', 'COLLABORATOR', 'ORGANIZATION_MEMBER'])
     follower_data, follower_time = perf_counter(follower_getter, USER_NAME)
 
-    # Note: archived repository data logic removed for new user
+    # several repositories that I've contributed to have since been deleted.
+    if OWNER_ID == {'id': 'MDQ6VXNlcjU3MzMxMTM0'}: # only calculate for user Andrew6rant
+        archived_data = add_archive()
+        for index in range(len(total_loc)-1):
+            total_loc[index] += archived_data[index]
+        contrib_data += archived_data[-1]
+        commit_data += int(archived_data[-2])
 
     for index in range(len(total_loc)-1): total_loc[index] = '{:,}'.format(total_loc[index]) # format added, deleted, and total LOC
 
-    # First update the data
     svg_overwrite('dark_mode.svg', age_data, commit_data, star_data, repo_data, contrib_data, follower_data, total_loc[:-1])
     svg_overwrite('light_mode.svg', age_data, commit_data, star_data, repo_data, contrib_data, follower_data, total_loc[:-1])
-    
-    # Then update ASCII avatars in both SVG files (AFTER svg_overwrite)
-    print('Updating ASCII avatars...')
-    update_svg_ascii_art('dark_mode.svg', ascii_avatar)
-    update_svg_ascii_art('light_mode.svg', ascii_avatar)
 
     # move cursor to override 'Calculation times:' with 'Total function time:' and the total function time, then move cursor back
     print('\033[F\033[F\033[F\033[F\033[F\033[F\033[F\033[F',
