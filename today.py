@@ -630,6 +630,8 @@ def main():
     
     print("🚀 GitHub 个人资料更新器启动中...")
     print("=" * 50)
+    print(ACCESS_TOKEN)
+    print(USER_NAME)
     
     # Step 1: Get user data
     print_progress("获取用户账户信息", 1, 8)
