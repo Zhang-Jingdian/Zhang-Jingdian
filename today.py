@@ -7,7 +7,6 @@ import time
 import hashlib
 import io
 import sys
-from io import BytesIO
 
 try:
     from PIL import Image
@@ -236,8 +235,8 @@ def loc_query(owner_affiliation, comment_size=0, force_cache=False, cursor=None,
     query ($owner_affiliation: [RepositoryAffiliation], $login: String!, $cursor: String) {
         user(login: $login) {
             repositories(first: 60, after: $cursor, ownerAffiliations: $owner_affiliation) {
-                edges {
-                    node {
+            edges {
+                node {
                     ... on Repository {
                         nameWithOwner
                         defaultBranchRef {
@@ -245,11 +244,11 @@ def loc_query(owner_affiliation, comment_size=0, force_cache=False, cursor=None,
                                 ... on Commit {
                                     history {
                                         totalCount
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
                     }
                 }
                 pageInfo {
@@ -260,7 +259,6 @@ def loc_query(owner_affiliation, comment_size=0, force_cache=False, cursor=None,
         }
     }'''
     variables = {'owner_affiliation': owner_affiliation, 'login': USER_NAME, 'cursor': cursor}
-    print('处理提交...') # 用通用提示替换硬编码
     request = simple_request(loc_query.__name__, query, variables)
     if request.json()['data']['user']['repositories']['pageInfo']['hasNextPage']:   # If repository data has another page
         edges += request.json()['data']['user']['repositories']['edges']            # Add on to the LoC count
@@ -271,58 +269,29 @@ def loc_query(owner_affiliation, comment_size=0, force_cache=False, cursor=None,
 
 def cache_builder(edges, comment_size, force_cache, loc_add=0, loc_del=0):
     """
-    Builds a cache of repository data
+    Checks each repository in edges to see if it has been updated since the last time it was cached
+    If it has, run recursive_loc on that repository to update the LOC count
     """
-    cached = True  # Assume all repositories are cached
-    data = []  # 初始化 data 变量
-    filename = 'cache/'+hashlib.sha256(USER_NAME.encode('utf-8')).hexdigest()+'.txt'  # Create a unique filename for each user
-    
+    cached = True # Assume all repositories are cached
+    filename = 'cache/'+hashlib.sha256(USER_NAME.encode('utf-8')).hexdigest()+'.txt' # Create a unique filename for each user
     try:
         with open(filename, 'r') as f:
             data = f.readlines()
-            if len(data) > 0 and not force_cache:  # If the file exists and has data
-                for line in data:
-                    if line.strip() != '':
-                        repo_data = line.strip().split(' ')
-                        if repo_data[0] in [edge['node']['nameWithOwner'] for edge in edges]:
-                            if int(repo_data[1]) != graph_commits(repo_data[3], repo_data[4]):  # If the number of commits has changed
-                                cached = False
-                                break
-    except FileNotFoundError:
-        # 如果缓存文件不存在，我们将创建一个新的
-        cached = False
+    except FileNotFoundError: # If the cache file doesn't exist, create it
+        data = []
         if comment_size > 0:
-            data = ['This line is a comment block. Write whatever you want here.\n' for _ in range(comment_size)]
-    except Exception as e:
-        print(f"❌ 读取缓存文件时出错: {str(e)}")
+            for _ in range(comment_size): data.append('This line is a comment block. Write whatever you want here.\n')
+        with open(filename, 'w') as f:
+            f.writelines(data)
+
+    if len(data)-comment_size != len(edges) or force_cache: # If the number of repos has changed, or force_cache is True
         cached = False
-        if comment_size > 0:
-            data = ['This line is a comment block. Write whatever you want here.\n' for _ in range(comment_size)]
+        flush_cache(edges, filename, comment_size)
+        with open(filename, 'r') as f:
+            data = f.readlines()
 
-    if not cached:
-        try:
-            # 确保缓存目录存在
-            os.makedirs(os.path.dirname(filename), exist_ok=True)
-            with open(filename, 'w') as f:
-                if comment_size > 0:
-                    f.writelines(data[:comment_size])  # 写入注释块
-                for node in edges:
-                    owner, repo = node['node']['nameWithOwner'].split('/')
-                    loc_data = loc_counter_one_repo(owner, repo, data, '', node['node']['defaultBranchRef']['target']['history'], 0, 0, 0)
-                    total_commits = node['node']['defaultBranchRef']['target']['history']['totalCount']
-                    f.write(f"{hashlib.sha256(node['node']['nameWithOwner'].encode('utf-8')).hexdigest()} {total_commits} {loc_data[2]} {loc_data[0]} {loc_data[1]}\n")
-            # 重新读取文件以确保数据一致性
-            with open(filename, 'r') as f:
-                data = f.readlines()
-            cached = True
-        except Exception as e:
-            print(f"❌ 创建缓存文件时出错: {str(e)}")
-            cached = False
-            if comment_size > 0:
-                data = ['This line is a comment block. Write whatever you want here.\n' for _ in range(comment_size)]
-
-    cache_comment = data[:comment_size]  # save the comment block
-    data = data[comment_size:]  # remove those lines
+    cache_comment = data[:comment_size] # save the comment block
+    data = data[comment_size:] # remove those lines
     for index in range(len(edges)):
         repo_hash, commit_count, *__ = data[index].split()
         if repo_hash == hashlib.sha256(edges[index]['node']['nameWithOwner'].encode('utf-8')).hexdigest():
@@ -548,42 +517,51 @@ def formatter(query_type, difference, funct_return=False, whitespace=0):
     return funct_return
 
 
-def generate_ascii_avatar(image_url, width=35):
+def generate_ascii_avatar(avatar_url, width=35, height=25):
     """
-    Generate ASCII art from user's GitHub avatar
+    Download user avatar and convert to ASCII art
     """
+    if not PIL_AVAILABLE:
+        print("Warning: Pillow not available, using fallback ASCII pattern.")
+        # Create a simple pattern as fallback
+        return ["@" * width for _ in range(height)]
+    
     try:
-        response = requests.get(image_url)
+        # Download avatar image
+        response = requests.get(avatar_url)
         response.raise_for_status()
         
-        image = Image.open(BytesIO(response.content))
+        # Open image with Pillow
+        image = Image.open(io.BytesIO(response.content))
         
         # Resize image
-        aspect_ratio = image.height / image.width
-        new_height = int(aspect_ratio * width * 0.55)
-        resized_image = image.resize((width, new_height))
+        image = image.resize((width, height))
         
         # Convert to grayscale
-        image = resized_image.convert('L')
-        pixels = image.getdata()
+        image = image.convert('L')
         
-        # Define ASCII characters from dark to light, ending with a space for the background
-        ASCII_CHARS = ['#', 'S', '?', '%', '+', '*', ':', '.', ' ']
+        # ASCII characters from darkest to lightest
+        ascii_chars = "@%#*+=-:. "
         
-        # Map pixels to ASCII characters
-        pixels_to_chars = "".join([ASCII_CHARS[pixel * len(ASCII_CHARS) // 256] for pixel in pixels])
+        # Convert pixels to ASCII
+        ascii_lines = []
+        pixels = list(image.getdata())
         
-        # Split into lines
-        ascii_art_lines = [pixels_to_chars[i:i + width] for i in range(0, len(pixels_to_chars), width)]
+        for i in range(0, len(pixels), width):
+            line = ""
+            for j in range(width):
+                if i + j < len(pixels):
+                    pixel = pixels[i + j]
+                    ascii_char = ascii_chars[min(pixel // 28, len(ascii_chars) - 1)]
+                    line += ascii_char
+            ascii_lines.append(line)
+            
+        return ascii_lines
         
-        return ascii_art_lines
-
-    except requests.exceptions.RequestException as e:
-        print(f"❌  无法获取头像: {e}")
-        return []
     except Exception as e:
-        print(f"❌  生成 ASCII 艺术时出错: {e}")
-        return []
+        print(f"Error generating ASCII avatar: {e}")
+        # Fallback to simple pattern
+        return ["@" * width for _ in range(height)]
 
 
 def update_svg_ascii_art(filename, ascii_lines):
