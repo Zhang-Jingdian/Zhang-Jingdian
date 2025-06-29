@@ -582,10 +582,12 @@ if __name__ == '__main__':
 
     for index in range(len(total_loc)-1): total_loc[index] = '{:,}'.format(total_loc[index]) # format added, deleted, and total LOC
 
+    # First update the data
     svg_overwrite('dark_mode.svg', age_data, commit_data, star_data, repo_data, contrib_data, follower_data, total_loc[:-1])
     svg_overwrite('light_mode.svg', age_data, commit_data, star_data, repo_data, contrib_data, follower_data, total_loc[:-1])
     
-    # Update ASCII avatars in both SVG files
+    # Then update ASCII avatars in both SVG files (AFTER svg_overwrite)
+    print('Updating ASCII avatars...')
     update_svg_ascii_art('dark_mode.svg', ascii_avatar)
     update_svg_ascii_art('light_mode.svg', ascii_avatar)
 
