@@ -68,42 +68,6 @@ def user_getter(username):
         return user_data['id'], user_data['createdAt'], user_data['avatarUrl']
     return None, None, None
 
-def contribution_getter(username):
-    """Fetches contribution data for the last 365 days."""
-    today = datetime.utcnow()
-    from_date = (today - timedelta(days=365)).isoformat() + 'Z'
-    query = """
-    query ($username: String!, $from: DateTime) {
-      user(login: $username) {
-        contributionsCollection(from: $from) {
-          contributionCalendar {
-            weeks {
-              contributionDays {
-                date
-                contributionCount
-              }
-            }
-          }
-        }
-      }
-    }
-    """
-    variables = {"username": username, "from": from_date}
-    data = run_query(query, variables)
-    contrib_map = {}
-    if data and data.get('data', {}).get('user'):
-        weeks = data['data']['user']['contributionsCollection']['contributionCalendar']['weeks']
-        for week in weeks:
-            for day in week['contributionDays']:
-                count = day['contributionCount']
-                level = 0
-                if count > 0: level = 1
-                if count > 8: level = 2
-                if count > 16: level = 3
-                if count > 24: level = 4
-                contrib_map[day['date']] = level
-    return contrib_map
-
 def stats_getter(username):
     """Fetches commit, star, and follower counts."""
     query = """
@@ -243,7 +207,7 @@ def main():
     USER_NAME = os.getenv("USER_NAME")
     ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
 
-    with tqdm(total=5, desc="🚀 Updating GitHub Profile") as pbar:
+    with tqdm(total=4, desc="🚀 Updating GitHub Profile") as pbar:
         
         pbar.set_description("👤 Fetching user info")
         _, _, avatar_url = user_getter(USER_NAME)
@@ -252,22 +216,16 @@ def main():
         pbar.set_description("📊 Fetching stats")
         commits, stars, followers = stats_getter(USER_NAME)
         pbar.update(1)
-
-        pbar.set_description("🗓️ Fetching contributions")
-        contrib_data = contribution_getter(USER_NAME)
-        pbar.update(1)
         
         stats = {'commits': commits, 'stars': stars, 'followers': followers}
         
         pbar.set_description("🖼️ Updating dark mode SVG")
         update_svg_data('dark_mode.svg', stats)
-        update_svg_contrib_graph('dark_mode.svg', contrib_data)
         update_svg_ascii_art('dark_mode.svg', avatar_url)
         pbar.update(1)
         
         pbar.set_description("💡 Updating light mode SVG")
         update_svg_data('light_mode.svg', stats)
-        update_svg_contrib_graph('light_mode.svg', contrib_data)
         update_svg_ascii_art('light_mode.svg', avatar_url)
         pbar.update(1)
 
