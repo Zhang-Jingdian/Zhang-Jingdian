@@ -138,7 +138,7 @@ def stats_getter(username):
     return commits, stars, followers
 
 # --- ASCII Art Generation ---
-def generate_ascii_avatar(image_url, width=30):
+def generate_ascii_avatar(image_url, width=25):
     """Generates ASCII art from an image URL."""
     try:
         response = requests.get(image_url, stream=True)
@@ -227,7 +227,7 @@ def update_svg_ascii_art(svg_path, avatar_url):
 
     # Add new art
     for i, line in enumerate(ascii_art.split('\n')):
-        tspan = etree.SubElement(art_container, "tspan", x="0", dy="1.1em")
+        tspan = etree.SubElement(art_container, "tspan", x="0", dy="1.2em")
         tspan.text = line
         tspan.tail = "\n"
     
