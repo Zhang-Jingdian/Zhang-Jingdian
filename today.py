@@ -7,6 +7,7 @@ import time
 import hashlib
 import io
 import sys
+from io import BytesIO
 
 try:
     from PIL import Image
@@ -517,51 +518,42 @@ def formatter(query_type, difference, funct_return=False, whitespace=0):
     return funct_return
 
 
-def generate_ascii_avatar(avatar_url, width=35, height=25):
+def generate_ascii_avatar(image_url, width=35):
     """
-    Download user avatar and convert to ASCII art
+    Generate ASCII art from user's GitHub avatar
     """
-    if not PIL_AVAILABLE:
-        print("Warning: Pillow not available, using fallback ASCII pattern.")
-        # Create a simple pattern as fallback
-        return ["@" * width for _ in range(height)]
-    
     try:
-        # Download avatar image
-        response = requests.get(avatar_url)
+        response = requests.get(image_url)
         response.raise_for_status()
         
-        # Open image with Pillow
-        image = Image.open(io.BytesIO(response.content))
+        image = Image.open(BytesIO(response.content))
         
         # Resize image
-        image = image.resize((width, height))
+        aspect_ratio = image.height / image.width
+        new_height = int(aspect_ratio * width * 0.55)
+        resized_image = image.resize((width, new_height))
         
         # Convert to grayscale
-        image = image.convert('L')
+        image = resized_image.convert('L')
+        pixels = image.getdata()
         
-        # ASCII characters from darkest to lightest
-        ascii_chars = "@%#*+=-:. "
+        # Define ASCII characters from dark to light, ending with a space for the background
+        ASCII_CHARS = ['#', 'S', '?', '%', '+', '*', ':', '.', ' ']
         
-        # Convert pixels to ASCII
-        ascii_lines = []
-        pixels = list(image.getdata())
+        # Map pixels to ASCII characters
+        pixels_to_chars = "".join([ASCII_CHARS[pixel * len(ASCII_CHARS) // 256] for pixel in pixels])
         
-        for i in range(0, len(pixels), width):
-            line = ""
-            for j in range(width):
-                if i + j < len(pixels):
-                    pixel = pixels[i + j]
-                    ascii_char = ascii_chars[min(pixel // 28, len(ascii_chars) - 1)]
-                    line += ascii_char
-            ascii_lines.append(line)
-            
-        return ascii_lines
+        # Split into lines
+        ascii_art_lines = [pixels_to_chars[i:i + width] for i in range(0, len(pixels_to_chars), width)]
         
+        return ascii_art_lines
+
+    except requests.exceptions.RequestException as e:
+        print(f"❌  无法获取头像: {e}")
+        return []
     except Exception as e:
-        print(f"Error generating ASCII avatar: {e}")
-        # Fallback to simple pattern
-        return ["@" * width for _ in range(height)]
+        print(f"❌  生成 ASCII 艺术时出错: {e}")
+        return []
 
 
 def update_svg_ascii_art(filename, ascii_lines):
