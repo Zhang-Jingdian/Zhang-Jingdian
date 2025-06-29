@@ -68,4 +68,32 @@ text, tspan {white-space: pre;}
 <tspan x="390" y="490" class="cc">. </tspan><tspan class="key">Commmits</tspan>:<tspan class="cc" id="commit_data_dots"> ................. </tspan><tspan class="value" id="commit_data">2,451</tspan> | <tspan class="key">Followers</tspan>:<tspan class="cc" id="follower_data_dots"> ......... </tspan><tspan class="value" id="follower_data">1</tspan>
 <tspan x="390" y="510" class="cc">. </tspan><tspan class="key">Lines of Code on GitHub</tspan>:<tspan class="cc" id="loc_data_dots">. </tspan><tspan class="value" id="loc_data">433,051</tspan> ( <tspan class="addColor" id="loc_add">445,440</tspan><tspan class="addColor">++</tspan>, <tspan id="loc_del_dots"> </tspan><tspan class="delColor" id="loc_del">12,389</tspan><tspan class="delColor">--</tspan> )
 </text>
+<text x="50%" y="50" text-anchor="middle" class="title">Hello, I'm Jingdian Zhang</text>
+<text x="50%" y="80" text-anchor="middle" class="subtitle">CS @ ZJU | Full Stack Developer | Tech Enthusiast</text>
+
+<g class="stats-grid">
+  <text x="25%" y="150" text-anchor="middle" class="stat-header">Languages</text>
+  <text x="25%" y="180" text-anchor="middle" class="stat-item">Python</text>
+  <text x="25%" y="200" text-anchor="middle" class="stat-item">TypeScript</text>
+  <text x="25%" y="220" text-anchor="middle" class="stat-item">Go</text>
+  <text x="25%" y="240" text-anchor="middle" class="stat-item">SQL</text>
+
+  <text x="50%" y="150" text-anchor="middle" class="stat-header">Tools & Tech</text>
+  <text x="50%" y="180" text-anchor="middle" class="stat-item">Docker</text>
+  <text x="50%" y="200" text-anchor="middle" class="stat-item">Kubernetes</text>
+  <text x="50%" y="220" text-anchor="middle" class="stat-item">React</text>
+  <text x="50%" y="240" text-anchor="middle" class="stat-item">Vue</text>
+
+  <text x="75%" y="220" text-anchor="middle" class="stat-item">Machine Learning</text>
+  <text x="75%" y="240" text-anchor="middle" class="stat-item">Data Science</text>
+</g>
+
+<g transform="translate(40, 300)">
+  <g class="chart-container">
+    <text x="425" y="-10" text-anchor="middle" class="chart-title">Contribution Graph (Last 365 Days)</text>
+  </g>
+</g>
+<g id="ascii-art-container" transform="translate(645, 40)">
+  <!-- ASCII art will be injected here -->
+</g>
 </svg>
