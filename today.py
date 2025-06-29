@@ -574,18 +574,33 @@ def update_svg_ascii_art(filename, ascii_lines):
     # Find the ASCII art text element
     ascii_text = root.find(".//*[@class='ascii']")
     if ascii_text is not None:
-        # Clear existing tspan elements
-        for tspan in ascii_text.findall('{*}tspan'):
-            ascii_text.remove(tspan)
+        # Clear existing content - remove all children and text
+        ascii_text.clear()
+        ascii_text.text = None
+        ascii_text.tail = None
+        
+        # Set the basic attributes
+        ascii_text.set('x', '15')
+        ascii_text.set('y', '30')
+        ascii_text.set('class', 'ascii')
+        
+        # Set the appropriate fill color based on filename
+        if 'dark_mode' in filename:
+            ascii_text.set('fill', '#c9d1d9')
+        else:
+            ascii_text.set('fill', '#24292f')
 
-        # Add new ASCII art
+        # Add new ASCII art lines
         for i, line in enumerate(ascii_lines):
             tspan = etree.SubElement(ascii_text, 'tspan')
             tspan.set('x', '15')
             tspan.set('y', str(30 + i * 20))
             tspan.text = line.ljust(35)  # Pad to consistent width
+    else:
+        print(f"⚠️  未找到 ASCII 艺术元素（class='ascii'）在文件 {filename} 中")
     
-    tree.write(filename, encoding='utf-8', xml_declaration=True)
+    # Write with proper formatting
+    tree.write(filename, encoding='utf-8', xml_declaration=True, pretty_print=True)
 
 
 def main():
