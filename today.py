@@ -271,28 +271,45 @@ def loc_query(owner_affiliation, comment_size=0, force_cache=False, cursor=None,
 
 def cache_builder(edges, comment_size, force_cache, loc_add=0, loc_del=0):
     """
-    Checks each repository in edges to see if it has been updated since the last time it was cached
-    If it has, run recursive_loc on that repository to update the LOC count
+    Builds a cache of repository data
     """
-    cached = True # Assume all repositories are cached
     filename = 'cache/'+hashlib.sha256(USER_NAME.encode('utf-8')).hexdigest()+'.txt' # Create a unique filename for each user
     try:
         with open(filename, 'r') as f:
             data = f.readlines()
-    except FileNotFoundError: # If the cache file doesn't exist, create it
-        data = []
-        if comment_size > 0:
-            for _ in range(comment_size): data.append('This line is a comment block. Write whatever you want here.\n')
-        with open(filename, 'w') as f:
-            f.writelines(data)
-
-    if len(data)-comment_size != len(edges) or force_cache: # If the number of repos has changed, or force_cache is True
+            if len(data) > 0 and not force_cache: # If the file exists and has data
+                for line in data:
+                    if line.strip() != '':
+                        repo_data = line.strip().split(' ')
+                        if repo_data[0] in [edge['node']['nameWithOwner'] for edge in edges]:
+                            if int(repo_data[1]) != graph_commits(repo_data[3], repo_data[4]): # If the number of commits has changed
+                                cached = False
+                                break
+    except FileNotFoundError:
+        # 如果缓存文件不存在，我们将创建一个新的
         cached = False
-        flush_cache(edges, filename, comment_size)
-        with open(filename, 'r') as f:
-            data = f.readlines()
+    except Exception as e:
+        print(f"❌ 读取缓存文件时出错: {str(e)}")
+        cached = False
 
-    cache_comment = data[:comment_size] # save the comment block
+    if not cached:
+        try:
+            # 确保缓存目录存在
+            os.makedirs(os.path.dirname(filename), exist_ok=True)
+            with open(filename, 'w') as f:
+                if comment_size > 0:
+                    for _ in range(comment_size): f.write('This line is a comment block. Write whatever you want here.\n')
+                for node in edges:
+                    owner, repo = node['node']['nameWithOwner'].split('/')
+                    loc_data = loc_counter_one_repo(owner, repo, data, '', node['node']['defaultBranchRef']['target']['history'], 0, 0, 0)
+                    total_commits = node['node']['defaultBranchRef']['target']['history']['totalCount']
+                    f.write(f"{hashlib.sha256(node['node']['nameWithOwner'].encode('utf-8')).hexdigest()} {total_commits} {loc_data[2]} {loc_data[0]} {loc_data[1]}\n")
+            cached = True
+        except Exception as e:
+            print(f"❌ 创建缓存文件时出错: {str(e)}")
+            cached = False
+
+    cache_comment = data[:comment_size] if 'data' in locals() else []  # save the comment block
     data = data[comment_size:] # remove those lines
     for index in range(len(edges)):
         repo_hash, commit_count, *__ = data[index].split()
