@@ -189,9 +189,14 @@ def update_svg_ascii_art(svg_path, avatar_url):
     for element in list(art_container):
         art_container.remove(element)
 
-    # Add new art
+    # Add new art with absolute y coordinates for better rendering
+    style = art_container.getparent().find('.//svg:style', namespaces=ns).text
+    font_size_str = [s for s in style.split('}') if '#ascii-art' in s][0]
+    font_size = int(''.join(filter(str.isdigit, [l for l in font_size_str.split(';') if 'font-size' in l][0])))
+    line_height = 1.2
+
     for i, line in enumerate(ascii_art.split('\n')):
-        tspan = etree.SubElement(art_container, "tspan", x="0", dy="1.2em")
+        tspan = etree.SubElement(art_container, "tspan", x="0", y=str(font_size * line_height * (i + 1)))
         tspan.text = line
         tspan.tail = "\n"
     
