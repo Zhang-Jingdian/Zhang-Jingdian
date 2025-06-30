@@ -175,4 +175,22 @@ cython_debug/
 # Operating System Files
 .DS_Store
 Thumbs.db
-desktop.ini 
+desktop.ini
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore OS-specific files
+.DS_Store
+
+# Ignore environment files
+.env
+
+# Ignore generated files and directories
+/output/
+/ascii.txt
+/ascii.png
+/ascii1.png 

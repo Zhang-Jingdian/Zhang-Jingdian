@@ -34,7 +34,7 @@ update: check_env ## Update the SVG profiles with latest GitHub stats and ASCII 
 	@$(PYTHON) src/today.py
 
 all: ascii update ## Run the full pipeline: generate ascii and then update profiles
-	@echo "✅  Full pipeline finished successfully!"
+	@echo "✅  Full pipeline finished successfully! Check the 'output' directory."
 
 # --- Helper Commands ---
 
@@ -48,8 +48,8 @@ endif
 
 clean: ## Clean up generated files
 	@echo "🧹  Cleaning up generated files..."
-	@rm -f ascii_art.txt
-	@rm -rf cache
+	@rm -rf output
+	@rm -f ascii.txt ascii.png
 
 install: ## Install dependencies from requirements.txt
 	@echo "📦  Installing dependencies..."
