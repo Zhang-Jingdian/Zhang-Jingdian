@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800px" height="400px">
+<defs>
+    <linearGradient id="bg_gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#f6f8fa;stop-opacity:1"/>
+    </linearGradient>
+</defs>
+<style>
+    /* Global */
+    text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+
+    /* ASCII Panel */
+    #ascii { font-family: Consolas, monospace; font-size: 15px; fill: #24292e; }
+
+    /* Info Panel */
+    #info-panel { font-size: 14px; }
+    .key { fill: #d73a49; font-weight: bold; }
+    .value { fill: #0366d6; }
+    .cc { fill: #586069; }
+    .separator { stroke: #e1e4e8; stroke-width: 1; }
+</style>
+<rect width="100%" height="100%" fill="url(#bg_gradient)" rx="10"/>
+
+<!-- Left Panel: ASCII -->
+<g transform="translate(0, 0)">
+    <text x="200" y="30" id="ascii" text-anchor="middle">
+        <tspan x="200" y="20.0">▒▒░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░</tspan>
+          <tspan x="200" dy="15">▒▒▒▒░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░</tspan>
+          <tspan x="200" dy="15">▒▒▒▒▒░░░░░░░░░░░░░░░░░░░░░░░░░░░░░</tspan>
+          <tspan x="200" dy="15">▒▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░░░░░░░░░░</tspan>
+          <tspan x="200" dy="15">▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░░░░░░░░░</tspan>
+          <tspan x="200" dy="15">▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░░░░░░░</tspan>
+          <tspan x="200" dy="15">▒▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░░░░░░</tspan>
+          <tspan x="200" dy="15">▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░░░░░</tspan>
+          <tspan x="200" dy="15">▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░░░░</tspan>
+          <tspan x="200" dy="15">▒▒▒▒▒▒▒▒▒▒▒▒▒▒░▒▒░░░░░░░░░░░░░░░░░</tspan>
+          <tspan x="200" dy="15">▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░░░░</tspan>
+          <tspan x="200" dy="15">▒▒▒▒▒▒▒▒▒▒▒▒▒▓▒▒░▒▒░░░░░░░░░░░░░░░</tspan>
+          <tspan x="200" dy="15">▒▒▒▒▒▒▒▒▒▒▒▓▓▒▒▒▒▒▒░░░░░░░░░░░░░░░</tspan>
+          <tspan x="200" dy="15">▒▒▒▒▒▒▒▒▒▒▒▓▒▒▓▒▓▒░░░░░░░░░░░░░░░░</tspan>
+          <tspan x="200" dy="15">▒▒▒▒▒▒▒▒▒▒▓▓▓▒▒░▒▒▒░░░░░░░░░░░░░░░</tspan>
+          <tspan x="200" dy="15">▒▒▒▒▒▒▒▒▒▒▓▓▓▓▒░▒▒▒▒░░░░░░░░░░░░░░</tspan>
+          <tspan x="200" dy="15">▒▒▒▒▒▒▒▒▒▒▒▓▓▒▒▒▒▒▒▒▒░░░░░░░░░░░░░</tspan>
+          <tspan x="200" dy="15">▒▒▒▒▒▒▒▒▒▒▒▓▒▒▒░░▒▒▒▒░░░░░░░░░░░░░</tspan>
+          <tspan x="200" dy="15">▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░▒▒▒▒░░░░░░░░░░░░░░</tspan>
+          <tspan x="200" dy="15">▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░░</tspan>
+          <tspan x="200" dy="15">▒▒▒▒▒▒▒▒▒▒▒▒▓▓▒▒▒▒▒░░░░░░░░░░░░░░░</tspan>
+          <tspan x="200" dy="15">▒▒▒▒▒▒▒▒▒▒▒▒▓▓▓▓▒▒▒░░░░░░░░░░░░░░░</tspan>
+          <tspan x="200" dy="15">▒▒▒▒▒▒▒▒▒▒▒▒▒▓▓▓▓▒▒▒░░░░░░░░░░░░░░</tspan>
+          <tspan x="200" dy="15">▒▒▒▒▒▒▒▒▒▒▒▒▒▓▓▓▓▓▓▒▒░░░░░░░░░░░░░</tspan>
+          <tspan x="200" dy="15">▒▒▒▒▒▒▒▒▒▒▒▒▒▒▓▓▓▓▓▒▒░░░░░░░░░░░░░</tspan>
+          <tspan x="200" dy="15">▒▒▒▒▒▒▒▒▒▒▒▒▒▒▓▓▓▒▒▒▒▒░░░░░░░░░░░░</tspan>
+      </text>
+</g>
+
+<!-- Right Panel: Info -->
+<g transform="translate(400, 0)">
+    <line class="separator" x1="20" y1="138" x2="380" y2="138"/>
+    <line class="separator" x1="20" y1="260" x2="380" y2="260"/>
+    <text x="15" y="40" fill="#24292e" id="info-panel">
+        <tspan x="25" y="105.0"><tspan class="key">Your Name</tspan><tspan class="cc">@</tspan><tspan class="key">GitHub</tspan></tspan>
+        <tspan x="25" y="170.0"><tspan class="key">Languages</tspan><tspan class="cc">: </tspan><tspan class="value">Language 1, Language 2</tspan></tspan>
+        <tspan x="25" y="195.0"><tspan class="key">Tools &amp; Tech</tspan><tspan class="cc">: </tspan><tspan class="value">Tool 1, Tool 2, Tool 3</tspan></tspan>
+        <tspan x="25" y="220.0"><tspan class="key">Interests</tspan><tspan class="cc">: </tspan><tspan class="value">Interest 1, Interest 2</tspan></tspan>
+        <tspan x="140" y="285.0" style="font-size: 12px; fill: #586069;">GitHub Stats</tspan>
+        <tspan x="25" y="320.0"><tspan class="key">Commits</tspan><tspan class="cc">: </tspan><tspan id="commit_data" class="value">2,333</tspan></tspan>
+        <tspan x="165" y="320.0"><tspan class="key">Stars</tspan><tspan class="cc">: </tspan><tspan id="star_data" class="value">14</tspan></tspan>
+        <tspan x="295" y="320.0"><tspan class="key">Followers</tspan><tspan class="cc">: </tspan><tspan id="follower_data" class="value">1</tspan></tspan>
+    </text>
+</g>
+</svg>

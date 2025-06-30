@@ -190,7 +190,7 @@ __pycache__/
 .env
 
 # Ignore generated files and directories
-/output/
-/ascii.txt
-/ascii.png
-/ascii1.png 
+# /output/
+# /ascii.txt
+# /ascii.png
+# /ascii1.png 
