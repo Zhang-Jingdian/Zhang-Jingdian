@@ -6,11 +6,11 @@
 Here are some ideas to get you started:
 -->
 
-- 🔭 I'm currently building fun and interactive web applications with React and TypeScript.
+- 🔭 I'm currently building fun and interactive web applications with Vue and TypeScript.
 - 🌱 I'm currently deepening my knowledge in Next.js and modern web performance optimization techniques.
 - 👯 I'm looking to collaborate on open-source frontend projects.
 - 🤔 I am actively seeking internship opportunities in frontend development to apply my skills and grow.
-- 💬 Ask me about `React`, `JavaScript`, `CSS`, and building user-friendly interfaces.
+- 💬 Ask me about `Vue`, `JavaScript`, `CSS`, and building user-friendly interfaces.
 - 📫 How to reach me: 2157429750@qq.com
 
 ---
