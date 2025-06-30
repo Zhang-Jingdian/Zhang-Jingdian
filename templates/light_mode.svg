@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<svg xmlns="http://www.w3.org/2000/svg" font-family="Consolas, monospace" width="800px" height="400px" font-size="14px">
+<svg xmlns="http://www.w3.org/2000/svg" font-family="Consolas, monospace" width="830px" height="400px" font-size="14px">
   <style>
     .key { fill: #d73a49; font-weight: bold; }
     .value { fill: #0366d6; }
