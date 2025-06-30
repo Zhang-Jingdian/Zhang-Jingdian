@@ -26,7 +26,7 @@
 </g>
 
 <!-- Right Panel: Info -->
-<g transform="translate(400, 0)">
+<g transform="translate(425, 0)">
     <text x="15" y="40" fill="#24292e" id="info-panel">
         <tspan x="15" y="105.0"><tspan class="key">Jingdian Zhang</tspan><tspan class="cc">@</tspan><tspan class="key">GitHub</tspan></tspan>
         <tspan x="15" y="125.0">---------------------------------------------</tspan>
