@@ -10,22 +10,21 @@
   <!-- Left Panel: ASCII -->
   <g transform="translate(0, 0)">
     <text x="15" y="30" fill="#24292e" id="ascii">
-        <tspan x="15" y="125.0">                                               </tspan>
-        <tspan x="15" y="140.0">                .:----.                        </tspan>
-        <tspan x="15" y="155.0">              .+**+=-=+=:.                     </tspan>
-        <tspan x="15" y="170.0">             .+##**+==-===:.                   </tspan>
-        <tspan x="15" y="185.0">             .*#****++=:.:::..                 </tspan>
-        <tspan x="15" y="200.0">              :+#***+-:::.......               </tspan>
-        <tspan x="15" y="215.0">               .:+#*=---:::...::.              </tspan>
-        <tspan x="15" y="230.0">                 .-++==--:::::.::              </tspan>
-        <tspan x="15" y="245.0">                   .:=+===-----=.              </tspan>
-        <tspan x="15" y="260.0">                     .:=++++++=:               </tspan>
-        <tspan x="15" y="275.0">                        .::::..                </tspan>
-        <tspan x="15" y="290.0">                                               </tspan>
+        <tspan x="15" y="132.5">                                             </tspan>
+        <tspan x="15" y="147.5">               :-----:.                      </tspan>
+        <tspan x="15" y="162.5">             .+**+=====-.                    </tspan>
+        <tspan x="15" y="177.5">             =##**++==--=:.                  </tspan>
+        <tspan x="15" y="192.5">             :*#****=-:......                </tspan>
+        <tspan x="15" y="207.5">              :=***+--:::......              </tspan>
+        <tspan x="15" y="222.5">                :=*===--::::..:.             </tspan>
+        <tspan x="15" y="237.5">                  .-+===-----:-.             </tspan>
+        <tspan x="15" y="252.5">                    .-=+++++==:              </tspan>
+        <tspan x="15" y="267.5">                      .:----:.               </tspan>
+        <tspan x="15" y="282.5">                                             </tspan>
       </text>
   </g>
   <!-- Right Panel: Info -->
-  <g transform="translate(400.0, 0)">
+  <g transform="translate(415.0, 0)">
     <text x="15" y="40" fill="#24292e" id="info-panel">
       <tspan x="15" y="102.5">
         <tspan class="key">Jingdian Zhang</tspan>

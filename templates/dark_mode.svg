@@ -10,66 +10,65 @@
   <!-- Left Panel: ASCII -->
   <g transform="translate(0, 0)">
     <text x="15" y="30" fill="#c9d1d9" id="ascii">
-        <tspan x="15" y="150.0">                                               </tspan>
-        <tspan x="15" y="165.0">                .:----.                        </tspan>
-        <tspan x="15" y="180.0">              .+**+=-=+=:.                     </tspan>
-        <tspan x="15" y="195.0">             .+##**+==-===:.                   </tspan>
-        <tspan x="15" y="210.0">             .*#****++=:.:::..                 </tspan>
-        <tspan x="15" y="225.0">              :+#***+-:::.......               </tspan>
-        <tspan x="15" y="240.0">               .:+#*=---:::...::.              </tspan>
-        <tspan x="15" y="255.0">                 .-++==--:::::.::              </tspan>
-        <tspan x="15" y="270.0">                   .:=+===-----=.              </tspan>
-        <tspan x="15" y="285.0">                     .:=++++++=:               </tspan>
-        <tspan x="15" y="300.0">                        .::::..                </tspan>
-        <tspan x="15" y="315.0">                                               </tspan>
+        <tspan x="15" y="132.5">                                             </tspan>
+        <tspan x="15" y="147.5">               :-----:.                      </tspan>
+        <tspan x="15" y="162.5">             .+**+=====-.                    </tspan>
+        <tspan x="15" y="177.5">             =##**++==--=:.                  </tspan>
+        <tspan x="15" y="192.5">             :*#****=-:......                </tspan>
+        <tspan x="15" y="207.5">              :=***+--:::......              </tspan>
+        <tspan x="15" y="222.5">                :=*===--::::..:.             </tspan>
+        <tspan x="15" y="237.5">                  .-+===-----:-.             </tspan>
+        <tspan x="15" y="252.5">                    .-=+++++==:              </tspan>
+        <tspan x="15" y="267.5">                      .:----:.               </tspan>
+        <tspan x="15" y="282.5">                                             </tspan>
       </text>
   </g>
   <!-- Right Panel: Info -->
-  <g transform="translate(425.0, 0)">
+  <g transform="translate(415.0, 0)">
     <text x="15" y="40" fill="#c9d1d9" id="info-panel">
-      <tspan x="15" y="127.5">
+      <tspan x="15" y="102.5">
         <tspan class="key">Jingdian Zhang</tspan>
         <tspan class="cc">@</tspan>
         <tspan class="key">GitHub</tspan>
       </tspan>
-      <tspan x="15" y="147.5">---------------------------------------------</tspan>
-      <tspan x="15" y="172.5">
+      <tspan x="15" y="122.5">---------------------------------------------</tspan>
+      <tspan x="15" y="147.5">
         <tspan class="key">School</tspan>
         <tspan class="cc">: </tspan>
         <tspan class="value">Zhejiang University</tspan>
       </tspan>
-      <tspan x="15" y="192.5">
+      <tspan x="15" y="167.5">
         <tspan class="key">Major</tspan>
         <tspan class="cc">: </tspan>
         <tspan class="value">Computer Science</tspan>
       </tspan>
-      <tspan x="15" y="212.5">
+      <tspan x="15" y="187.5">
         <tspan class="key">Languages</tspan>
         <tspan class="cc">: </tspan>
         <tspan class="value">Python, TypeScript, Go, SQL</tspan>
       </tspan>
-      <tspan x="15" y="232.5">
+      <tspan x="15" y="207.5">
         <tspan class="key">Tools &amp; Tech</tspan>
         <tspan class="cc">: </tspan>
         <tspan class="value">Docker, Kubernetes, React, Vue</tspan>
       </tspan>
-      <tspan x="15" y="252.5">
+      <tspan x="15" y="227.5">
         <tspan class="key">Interests</tspan>
         <tspan class="cc">: </tspan>
         <tspan class="value">Distributed Systems, ML</tspan>
       </tspan>
-      <tspan x="15" y="272.5">---<tspan class="cc">[</tspan> <tspan class="key">GitHub Stats</tspan> <tspan class="cc">]</tspan>-----------------------------</tspan>
-      <tspan x="15" y="297.5">
+      <tspan x="15" y="247.5">---<tspan class="cc">[</tspan> <tspan class="key">GitHub Stats</tspan> <tspan class="cc">]</tspan>-----------------------------</tspan>
+      <tspan x="15" y="272.5">
         <tspan class="key">Commits (this year)</tspan>
         <tspan class="cc">: </tspan>
         <tspan id="commit_data" class="value">2,393</tspan>
       </tspan>
-      <tspan x="15" y="317.5">
+      <tspan x="15" y="292.5">
         <tspan class="key">Stars</tspan>
         <tspan class="cc">: </tspan>
         <tspan id="star_data" class="value">0</tspan>
       </tspan>
-      <tspan x="15" y="337.5">
+      <tspan x="15" y="312.5">
         <tspan class="key">Followers</tspan>
         <tspan class="cc">: </tspan>
         <tspan id="follower_data" class="value">1</tspan>
