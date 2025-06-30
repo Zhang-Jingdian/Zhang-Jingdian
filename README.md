@@ -1,7 +1,7 @@
 ### Hi there 👋, I'm Zhang-Jingdian
 
 <!--
-**zjd/profile** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+**Zhang-Jingdian/profile** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 
 Here are some ideas to get you started:
 -->
@@ -34,8 +34,8 @@ Here are some ideas to get you started:
 ### 📊 My GitHub Stats
 
 <p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=zjd&show_icons=true&theme=radical" alt="github stats" />
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=zjd&layout=compact&theme=radical" alt="top langs" />
+  <img src="https://github-readme-stats.vercel.app/api?username=Zhang-Jingdian&show_icons=true&theme=radical" alt="github stats" />
+  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=Zhang-Jingdian&layout=compact&theme=radical" alt="top langs" />
 </p>
 
 ---
