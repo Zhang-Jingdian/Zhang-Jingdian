@@ -63,23 +63,29 @@ def stats_getter(username):
     return commits, stars, followers
 
 def update_svg(svg_path, stats, ascii_content):
-    """Updates SVG with latest statistics and ASCII text, centering content vertically."""
+    """Updates SVG, dynamically positioning panels and centering content."""
     try:
-        tree = etree.parse(svg_path)
+        parser = etree.XMLParser(remove_blank_text=True)
+        tree = etree.parse(svg_path, parser)
     except etree.XMLSyntaxError as e:
         print(f"❌ Error parsing {svg_path}: {e}")
         return
         
     root = tree.getroot()
     ns = {'svg': 'http://www.w3.org/2000/svg'}
-    svg_height = 400
-    line_height = 15
 
-    # Center ASCII content
+    # Dynamically get dimensions from SVG
+    width_str = root.get("width", "800px")
+    height_str = root.get("height", "400px")
+    svg_width = float(width_str.replace('px', ''))
+    svg_height = float(height_str.replace('px', ''))
+    
+    # --- Left Panel (ASCII) ---
     if ascii_content:
         ascii_container = root.find(".//*[@id='ascii']", namespaces=ns)
         if ascii_container is not None:
             lines = ascii_content.splitlines()
+            line_height = 15
             total_height = len(lines) * line_height
             y_start = (svg_height - total_height) / 2 + line_height
 
@@ -94,10 +100,14 @@ def update_svg(svg_path, stats, ascii_content):
             if len(ascii_container) > 0:
                 ascii_container[-1].tail = '\n' + ' ' * 6
 
-    # Center Info Panel content and update stats
+    # --- Right Panel (Info) ---
     info_panel = root.find(".//*[@id='info-panel']", namespaces=ns)
     if info_panel is not None:
-        # Update stats first
+        # Dynamically position the panel to the right half
+        right_panel_group = info_panel.getparent()
+        right_panel_group.set('transform', f'translate({svg_width / 2}, 0)')
+
+        # Update stats
         ids_to_update = {
             'commit_data': stats.get('commits', 0),
             'star_data': stats.get('stars', 0),
@@ -108,21 +118,19 @@ def update_svg(svg_path, stats, ascii_content):
             if element is not None:
                 element.text = f"{value:,}"
 
-        # Now, vertically center the entire block
+        # Vertically center the entire block
         info_lines = info_panel.findall('svg:tspan', namespaces=ns)
-        total_info_height = len(info_lines) * 20  # Approximate line height for info
+        total_info_height = len(info_lines) * 20 + 5 # Add a little extra for separators
         info_y_start = (svg_height - total_info_height) / 2 + 15
         
         current_y = info_y_start
         for tspan in info_lines:
             tspan.set('y', str(current_y))
-            # A bit of a hack for the separators to give them more space
             if '---' in (tspan.text or ''):
                  current_y += 25
             else:
                 current_y += 20
-
-
+    
     tree.write(svg_path, pretty_print=True, xml_declaration=True, encoding='UTF-8')
 
 def main():

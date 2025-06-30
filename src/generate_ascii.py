@@ -2,6 +2,7 @@ import os
 import sys
 from PIL import Image
 import argparse
+from lxml import etree
 
 # --- Constants ---
 ASCII_CHARS = "M%#*+=-:. "
@@ -77,9 +78,39 @@ def main():
     script_dir = os.path.dirname(__file__)
     root_dir = os.path.dirname(script_dir)
     image_path = os.path.join(root_dir, args.img_file)
+    
+    # --- Dynamic Width Calculation ---
+    final_width = args.width
+    final_height = args.height
+    
+    # If width/height are not user-provided, calculate from SVG template
+    if final_width is None and final_height is None:
+        template_path = os.path.join(root_dir, "templates", "dark_mode.svg")
+        try:
+            tree = etree.parse(template_path)
+            root = tree.getroot()
+            width_str = root.get("width", "800px")
+            font_size_str = root.get("font-size", "14px")
+            
+            svg_width = float(width_str.replace('px', ''))
+            font_size = float(font_size_str.replace('px', ''))
+            
+            # Approximation for character width based on font size
+            char_width_ratio = 0.6 
+            char_pixel_width = font_size * char_width_ratio
+            panel_pixel_width = svg_width / 2
+            
+            # Subtract some padding from the panel width
+            padding = 30 # 15px on each side
+            final_width = int((panel_pixel_width - padding) / char_pixel_width)
+
+        except Exception as e:
+            print(f"🎨 Warning: Could not read SVG template to get dimensions: {e}")
+            print("Falling back to default width of 45.")
+            final_width = 45 # Fallback to previous default
 
     print(f"🎨 Generating ASCII from '{image_path}'...")
-    ascii_content = generate_ascii(image_path, args.width, args.height)
+    ascii_content = generate_ascii(image_path, final_width, final_height)
     
     if ascii_content:
         try:
