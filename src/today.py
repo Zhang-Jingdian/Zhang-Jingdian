@@ -62,8 +62,8 @@ def stats_getter(username):
     followers = user_data['followers']['totalCount']
     return commits, stars, followers
 
-def update_svg(svg_path, stats, ascii):
-    """Updates SVG with latest statistics and ASCII."""
+def update_svg(svg_path, stats, ascii_content):
+    """Updates SVG with latest statistics and ASCII text, centering content vertically."""
     try:
         tree = etree.parse(svg_path)
     except etree.XMLSyntaxError as e:
@@ -72,38 +72,56 @@ def update_svg(svg_path, stats, ascii):
         
     root = tree.getroot()
     ns = {'svg': 'http://www.w3.org/2000/svg'}
+    svg_height = 400
+    line_height = 15
 
-    # Update stats
-    ids_to_update = {
-        'commit_data': stats.get('commits', 0),
-        'star_data': stats.get('stars', 0),
-        'follower_data': stats.get('followers', 0)
-    }
-    for element_id, value in ids_to_update.items():
-        element = root.find(f".//*[@id='{element_id}']", namespaces=ns)
-        if element is not None:
-            element.text = f"{value:,}"
+    # Center ASCII content
+    if ascii_content:
+        ascii_container = root.find(".//*[@id='ascii']", namespaces=ns)
+        if ascii_container is not None:
+            lines = ascii_content.splitlines()
+            total_height = len(lines) * line_height
+            y_start = (svg_height - total_height) / 2 + line_height
 
-    # Update ASCII
-    if ascii:
-        container = root.find(".//*[@id='ascii']", namespaces=ns)
-        if container is not None:
-            # Clear existing ascii
-            for element in list(container):
-                container.remove(element)
+            for element in list(ascii_container):
+                ascii_container.remove(element)
             
-            # Add new ascii line by line with proper indentation
-            container.text = '\n' + ' ' * 8
-            y_start = 30
-            y_step = 15
-            for i, line in enumerate(ascii.splitlines()):
-                tspan = etree.SubElement(container, "tspan", x="15", y=str(y_start + i * y_step))
+            ascii_container.text = '\n' + ' ' * 8
+            for i, line in enumerate(lines):
+                tspan = etree.SubElement(ascii_container, "tspan", x="15", y=str(y_start + i * line_height))
                 tspan.text = line
                 tspan.tail = '\n' + ' ' * 8
-            
-            # Adjust tail of the last element
-            if len(container) > 0:
-                container[-1].tail = '\n' + ' ' * 6
+            if len(ascii_container) > 0:
+                ascii_container[-1].tail = '\n' + ' ' * 6
+
+    # Center Info Panel content and update stats
+    info_panel = root.find(".//*[@id='info-panel']", namespaces=ns)
+    if info_panel is not None:
+        # Update stats first
+        ids_to_update = {
+            'commit_data': stats.get('commits', 0),
+            'star_data': stats.get('stars', 0),
+            'follower_data': stats.get('followers', 0)
+        }
+        for element_id, value in ids_to_update.items():
+            element = info_panel.find(f".//*[@id='{element_id}']", namespaces=ns)
+            if element is not None:
+                element.text = f"{value:,}"
+
+        # Now, vertically center the entire block
+        info_lines = info_panel.findall('svg:tspan', namespaces=ns)
+        total_info_height = len(info_lines) * 20  # Approximate line height for info
+        info_y_start = (svg_height - total_info_height) / 2 + 15
+        
+        current_y = info_y_start
+        for tspan in info_lines:
+            tspan.set('y', str(current_y))
+            # A bit of a hack for the separators to give them more space
+            if '---' in (tspan.text or ''):
+                 current_y += 25
+            else:
+                current_y += 20
+
 
     tree.write(svg_path, pretty_print=True, xml_declaration=True, encoding='UTF-8')
 
@@ -114,10 +132,10 @@ def main():
     
     username = os.getenv("USER_NAME")
     
-    ascii = None
+    ascii_content = None
     try:
         with open(ASCII_FILE_PATH, "r") as f:
-            ascii = f.read()
+            ascii_content = f.read()
     except FileNotFoundError:
         print(f"🎨 Warning: {os.path.basename(ASCII_FILE_PATH)} not found. Skipping ASCII update.")
     except IOError as e:
@@ -130,8 +148,8 @@ def main():
         pbar.update(1)
         
         pbar.set_description("✍️ Writing to SVG files...")
-        update_svg(DARK_MODE_SVG_PATH, stats, ascii)
-        update_svg(LIGHT_MODE_SVG_PATH, stats, ascii)
+        update_svg(DARK_MODE_SVG_PATH, stats, ascii_content)
+        update_svg(LIGHT_MODE_SVG_PATH, stats, ascii_content)
         pbar.update(1)
 
     print("✅ Profile updated successfully!")

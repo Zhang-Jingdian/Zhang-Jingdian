@@ -19,17 +19,21 @@ endif
 # Python interpreter
 PYTHON := python3
 
+# Allow passing arguments to python scripts
+ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
+$(eval $(ARGS):;@:)
+
 # --- Core Commands ---
 
-art: ## Generate the ASCII art from your local ascii image
-	@echo "🎨  Generating ASCII art from local image..."
-	@$(PYTHON) src/generate_ascii.py
+ascii: ## Generate the ASCII text from your local ascii image
+	@echo "🎨  Generating ASCII text from local image..."
+	@$(PYTHON) src/generate_ascii.py $(ARGS)
 
-update: check_env ## Update the SVG profiles with latest GitHub stats and ASCII art
+update: check_env ## Update the SVG profiles with latest GitHub stats and ASCII text
 	@echo "🚀  Updating SVG profile cards..."
 	@$(PYTHON) src/today.py
 
-all: art update ## Run the full pipeline: generate art and then update profiles
+all: ascii update ## Run the full pipeline: generate ascii and then update profiles
 	@echo "✅  Full pipeline finished successfully!"
 
 # --- Helper Commands ---
@@ -57,4 +61,4 @@ help: ## Show this help message
 	@echo "Targets:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'
 
-.PHONY: art update all check_env clean install help 
+.PHONY: ascii update all check_env clean install help 
