@@ -21,8 +21,8 @@ PYTHON := python3
 
 # --- Core Commands ---
 
-art: check_env ## Generate the ASCII art from your GitHub avatar
-	@echo "🎨  Generating ASCII art from GitHub avatar..."
+art: ## Generate the ASCII art from your local ascii image
+	@echo "🎨  Generating ASCII art from local image..."
 	@$(PYTHON) src/generate_ascii.py
 
 update: check_env ## Update the SVG profiles with latest GitHub stats and ASCII art

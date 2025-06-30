@@ -8,11 +8,28 @@
 </style>
 <rect width="100%" height="100%" fill="#202020" rx="10"/>
 
-<!-- ASCII Art -->
-<g transform="translate(0, 0)">
-  <text x="15" y="30" fill="#c9d1d9" id="ascii-art">
-      <tspan x="15" y="30">MMMMMMMMMMMMMMMM%%%MMMMMMMMMMMMMMMM</tspan><tspan x="15" y="45">MMMMMMMMM%*+==-------==+*%MMMMMMMMM</tspan><tspan x="15" y="60">MMMMMM#+--:::::::::::::::--+#MMMMMM</tspan><tspan x="15" y="75">MMMM#+====----:::::::---=====+%MMMM</tspan><tspan x="15" y="90">M%%%#*++++++***+===+***++++++*#%%%M</tspan><tspan x="15" y="105">M%%#-:::-=+-::*M%#%M*::-==:::--#%%M</tspan><tspan x="15" y="120">M###--::##%M=.+M=:=M+.+%%M*::--##%M</tspan><tspan x="15" y="135">M+=%=:::+%%#-:%*:::*%:-#%%+:::=%=*M</tspan><tspan x="15" y="150">M+-*#+==-===+#*:::::*#+===-==+#*-*M</tspan><tspan x="15" y="165">M*---=**+==++=:::::::=+===+*+=---#M</tspan><tspan x="15" y="180">M%---:-##*+--:::::::::--=*#+::--=MM</tspan><tspan x="15" y="195">MM*---:-#MMM%%%%%%%%%%%MM%*-----#MM</tspan><tspan x="15" y="210">MMM#---::=*#%#*++++*#%%#+-:---=%MMM</tspan><tspan x="15" y="225">MMMM%+---::-------------::--=*MMMMM</tspan><tspan x="15" y="240">MMMMMMM#+--::::::::::::--=+#MMMMMMM</tspan><tspan x="15" y="255">MMMMMMMMMM%#*++=====++*#%MMMMMMMMMM</tspan><tspan x="15" y="270">MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM</tspan></text>
-  
+<!-- ASCII -->
+<text x="15" y="30" fill="#c9d1d9" id="ascii">
+        <tspan x="15" y="30">                                                                      </tspan>
+        <tspan x="15" y="45">                           ....                                       </tspan>
+        <tspan x="15" y="60">                       .:----===-.                                    </tspan>
+        <tspan x="15" y="75">                      :+**+==--=++=:.                                 </tspan>
+        <tspan x="15" y="90">                     -*#***++==---=++:.                               </tspan>
+        <tspan x="15" y="105">                    .*###***+++===--=++-.                             </tspan>
+        <tspan x="15" y="120">                    .*#*#*****+++=-:..:::..                           </tspan>
+        <tspan x="15" y="135">                    .=##*******+-::.......:..                         </tspan>
+        <tspan x="15" y="150">                     .-+##****+---::::......:..                       </tspan>
+        <tspan x="15" y="165">                       .-*#***==---:::::.....::.                      </tspan>
+        <tspan x="15" y="180">                         .-*#+===----:::::::..::.                     </tspan>
+        <tspan x="15" y="195">                           .-++====----::::::.:-:                     </tspan>
+        <tspan x="15" y="210">                             .-++====--------:-=.                     </tspan>
+        <tspan x="15" y="225">                               .-++++==========:.                     </tspan>
+        <tspan x="15" y="240">                                 .-=+***+++++=:                       </tspan>
+        <tspan x="15" y="255">                                   ..:-----:.                         </tspan>
+        <tspan x="15" y="270">                                                                      </tspan>
+        <tspan x="15" y="285">                                                                      </tspan>
+      </text>
+<g>  
   <!-- Info Panel -->
   <text x="320" y="40" fill="#c9d1d9">
     <tspan x="320" y="40"><tspan class="key">Jingdian Zhang</tspan><tspan class="cc">@</tspan><tspan class="key">GitHub</tspan></tspan>

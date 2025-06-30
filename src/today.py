@@ -8,7 +8,7 @@ from tqdm import tqdm
 # --- Path Configuration ---
 # The script is in /src, so we need to go up one level for root
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-ART_FILE_PATH = os.path.join(ROOT_DIR, "ascii_art.txt")
+ASCII_FILE_PATH = os.path.join(ROOT_DIR, "ascii.txt")
 DARK_MODE_SVG_PATH = os.path.join(ROOT_DIR, "templates", "dark_mode.svg")
 LIGHT_MODE_SVG_PATH = os.path.join(ROOT_DIR, "templates", "light_mode.svg")
 
@@ -62,8 +62,8 @@ def stats_getter(username):
     followers = user_data['followers']['totalCount']
     return commits, stars, followers
 
-def update_svg(svg_path, stats, ascii_art):
-    """Updates SVG with latest statistics and ASCII art."""
+def update_svg(svg_path, stats, ascii):
+    """Updates SVG with latest statistics and ASCII."""
     try:
         tree = etree.parse(svg_path)
     except etree.XMLSyntaxError as e:
@@ -84,20 +84,26 @@ def update_svg(svg_path, stats, ascii_art):
         if element is not None:
             element.text = f"{value:,}"
 
-    # Update ASCII art
-    if ascii_art:
-        art_container = root.find(".//*[@id='ascii-art']", namespaces=ns)
-        if art_container is not None:
-            # Clear existing art
-            for element in list(art_container):
-                art_container.remove(element)
+    # Update ASCII
+    if ascii:
+        container = root.find(".//*[@id='ascii']", namespaces=ns)
+        if container is not None:
+            # Clear existing ascii
+            for element in list(container):
+                container.remove(element)
             
-            # Add new art line by line
+            # Add new ascii line by line with proper indentation
+            container.text = '\n' + ' ' * 8
             y_start = 30
             y_step = 15
-            for i, line in enumerate(ascii_art.splitlines()):
-                tspan = etree.SubElement(art_container, "tspan", x="15", y=str(y_start + i * y_step))
+            for i, line in enumerate(ascii.splitlines()):
+                tspan = etree.SubElement(container, "tspan", x="15", y=str(y_start + i * y_step))
                 tspan.text = line
+                tspan.tail = '\n' + ' ' * 8
+            
+            # Adjust tail of the last element
+            if len(container) > 0:
+                container[-1].tail = '\n' + ' ' * 6
 
     tree.write(svg_path, pretty_print=True, xml_declaration=True, encoding='UTF-8')
 
@@ -108,14 +114,14 @@ def main():
     
     username = os.getenv("USER_NAME")
     
-    ascii_art = None
+    ascii = None
     try:
-        with open(ART_FILE_PATH, "r") as f:
-            ascii_art = f.read()
+        with open(ASCII_FILE_PATH, "r") as f:
+            ascii = f.read()
     except FileNotFoundError:
-        print(f"🎨 Warning: {os.path.basename(ART_FILE_PATH)} not found. Skipping ASCII art update.")
+        print(f"🎨 Warning: {os.path.basename(ASCII_FILE_PATH)} not found. Skipping ASCII update.")
     except IOError as e:
-        print(f"🎨 Warning: Could not read {os.path.basename(ART_FILE_PATH)}: {e}")
+        print(f"🎨 Warning: Could not read {os.path.basename(ASCII_FILE_PATH)}: {e}")
 
     with tqdm(total=2, desc="🚀 Updating profile stats") as pbar:
         pbar.set_description("📊 Fetching stats...")
@@ -124,8 +130,8 @@ def main():
         pbar.update(1)
         
         pbar.set_description("✍️ Writing to SVG files...")
-        update_svg(DARK_MODE_SVG_PATH, stats, ascii_art)
-        update_svg(LIGHT_MODE_SVG_PATH, stats, ascii_art)
+        update_svg(DARK_MODE_SVG_PATH, stats, ascii)
+        update_svg(LIGHT_MODE_SVG_PATH, stats, ascii)
         pbar.update(1)
 
     print("✅ Profile updated successfully!")
